@@ -10,9 +10,10 @@
 #define YVChatKit_h
 
 #import "CHKUtils.h"
-#import "ChannelCell.h"
-#import "SignInViewController.h"
-#import "ChatsListViewController.h"
-#import "ContactsViewController.h"
+#import "VYChannelCell.h"
+#import "VYChatMessageCell.h"
+#import "VYSignInViewController.h"
+#import "VYChatsListViewController.h"
+#import "VYContactsViewController.h"
 
 #endif /* YVChatKit_h */
