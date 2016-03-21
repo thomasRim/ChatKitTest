@@ -8,14 +8,9 @@
 
 #import "CHKBaseViewController.h"
 
-@interface CHKBaseViewController ()
-
-@end
-
 @implementation CHKBaseViewController
 
 #pragma mark - Class Methods
-
 
 + (UINib *)nib
 {
