@@ -9,7 +9,7 @@
 @import MagnetMax;
 
 
-@interface VYChannelCell : UITableViewCell
+@interface CHKChannelCell : UITableViewCell
 
 /**
  *  Using custom inherited class, you should override setter for this property.

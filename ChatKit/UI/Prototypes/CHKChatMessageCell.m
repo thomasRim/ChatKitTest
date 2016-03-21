@@ -1,14 +1,14 @@
 //
-//  VYChatMessageCell.m
+//  CHKChatMessageCell.m
 //  ChatKit
 //
 //  Created by Vladimir Yevdokimov on 3/21/16.
 //  Copyright © 2016 Vladimir Yevdokimov. All rights reserved.
 //
 
-#import "VYChatMessageCell.h"
+#import "CHKChatMessageCell.h"
 
-@implementation VYChatMessageCell
+@implementation CHKChatMessageCell
 
 - (void)awakeFromNib {
     // Initialization code

@@ -11,7 +11,7 @@
 @import MagnetMax;
 
 
-@interface VYChannelsViewController : CHKBaseViewController <UITableViewDelegate, UITableViewDataSource>
+@interface CHKChannelsViewController : CHKBaseViewController <UITableViewDelegate, UITableViewDataSource>
 
 /**
  *  Defines if Search bar will be visible. and enabled for searching.

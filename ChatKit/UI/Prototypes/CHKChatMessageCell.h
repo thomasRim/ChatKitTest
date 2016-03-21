@@ -1,5 +1,5 @@
 //
-//  VYChatMessageCell.h
+//  CHKChatMessageCell.h
 //  ChatKit
 //
 //  Created by Vladimir Yevdokimov on 3/21/16.
@@ -10,7 +10,7 @@
 
 @import MagnetMax;
 
-@interface VYChatMessageCell : UITableViewCell
+@interface CHKChatMessageCell : UITableViewCell
 
 @property (nonatomic, strong) MMXMessage *message;
 

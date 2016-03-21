@@ -1,14 +1,14 @@
 //
-//  VYChatViewController.m
+//  CHKChatViewController.m
 //  ChatKit
 //
 //  Created by Vladimir Yevdokimov on 3/7/16.
 //  Copyright © 2016 Vladimir Yevdokimov. All rights reserved.
 //
 
-#import "VYChatViewController.h"
+#import "CHKChatViewController.h"
 
-@interface VYChatViewController ()<UIWebViewDelegate>
+@interface CHKChatViewController ()<UIWebViewDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *chatTable;
 
@@ -26,13 +26,13 @@
 
 @end
 
-@implementation VYChatViewController
+@implementation CHKChatViewController
 
 
 + (UINib *)nib
 {
-    return [UINib nibWithNibName:NSStringFromClass([VYChatViewController class])
-                          bundle:[NSBundle bundleForClass:[VYChatViewController class]]];
+    return [UINib nibWithNibName:NSStringFromClass([CHKChatViewController class])
+                          bundle:[NSBundle bundleForClass:[CHKChatViewController class]]];
 }
 
 #pragma mark - Interface Methods

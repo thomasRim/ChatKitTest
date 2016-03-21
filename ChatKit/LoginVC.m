@@ -8,7 +8,7 @@
 
 #import "LoginVC.h"
 
-#import "VYChannelsViewController.h"
+#import "CHKChannelsViewController.h"
 
 #import "AuthManager.h"
 #import "SVProgressHUD.h"
@@ -65,7 +65,7 @@
 
     [MagnetMax initModule:[MMX sharedInstance] success:^{
         [SVProgressHUD dismiss];
-        VYChannelsViewController *vc = [VYChannelsViewController new];
+        CHKChannelsViewController *vc = [CHKChannelsViewController new];
         
         UINavigationController *nc = [[UINavigationController alloc] initWithRootViewController:vc];
         

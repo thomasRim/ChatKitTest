@@ -1,5 +1,5 @@
 //
-//  VYContactsViewController.h
+//  CHKContactsViewController.h
 //  ChatKit
 //
 //  Created by Vladimir Yevdokimov on 3/9/16.
@@ -10,7 +10,7 @@
 
 @import MagnetMax;
 
-@interface VYContactsViewController : CHKBaseViewController <UITableViewDelegate, UITableViewDataSource>
+@interface CHKContactsViewController : CHKBaseViewController <UITableViewDelegate, UITableViewDataSource>
 
 /**
  *  Defines if Search bar will be visible. and enabled for searching.

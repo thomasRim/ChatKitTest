@@ -6,11 +6,11 @@
 //  Copyright © 2016 Vladimir Yevdokimov. All rights reserved.
 //
 
-#import "VYChannelCell.h"
+#import "CHKChannelCell.h"
 
 #import "CHKUtils.h"
 
-@implementation VYChannelCell
+@implementation CHKChannelCell
 
 
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier

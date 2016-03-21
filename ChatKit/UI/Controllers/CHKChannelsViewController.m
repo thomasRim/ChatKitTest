@@ -6,14 +6,14 @@
 //  Copyright © 2016 Vladimir Yevdokimov. All rights reserved.
 //
 
-#import "VYChannelsViewController.h"
+#import "CHKChannelsViewController.h"
 
-#import "VYContactsViewController.h"
-#import "VYChatViewController.h"
+#import "CHKContactsViewController.h"
+#import "CHKChatViewController.h"
 
-#import "VYChannelCell.h"
+#import "CHKChannelCell.h"
 
-@interface VYChannelsViewController ()
+@interface CHKChannelsViewController ()
 
 @property (nonatomic,strong) NSMutableArray <MMXChannel*> *presentingChannels;
 
@@ -27,11 +27,11 @@
 
 @end
 
-@implementation VYChannelsViewController
+@implementation CHKChannelsViewController
 
 + (UINib*)nib {
-    return [UINib nibWithNibName:NSStringFromClass([VYChannelsViewController class])
-                          bundle:[NSBundle bundleForClass:[VYChannelsViewController class]]];
+    return [UINib nibWithNibName:NSStringFromClass([CHKChannelsViewController class])
+                          bundle:[NSBundle bundleForClass:[CHKChannelsViewController class]]];
 }
 
 #pragma mark - UI and Loading
@@ -103,7 +103,7 @@
 {
     NSLog(@"Activated didPressChatCreate. You should override this method to catch this interaction.");
     
-    VYContactsViewController *vc = [VYContactsViewController new];
+    CHKContactsViewController *vc = [CHKContactsViewController new];
     
     if (self.navigationController) {
         [self.navigationController pushViewController:vc animated:YES];
@@ -163,12 +163,12 @@
 {
     if (channel) {
         if (self.navigationController) {
-            VYChatViewController *vc = [VYChatViewController new];
+            CHKChatViewController *vc = [CHKChatViewController new];
             vc.chatChannel = channel;
             [self.navigationController pushViewController:vc animated:YES];
             
         } else {
-            VYChatViewController *vc = [VYChatViewController new];
+            CHKChatViewController *vc = [CHKChatViewController new];
             vc.chatChannel = channel;
             [self.presentingViewController presentViewController:vc animated:YES completion:nil];
         }
@@ -197,10 +197,10 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSString *identifier = NSStringFromClass([VYChannelCell class]);
-    VYChannelCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
+    NSString *identifier = NSStringFromClass([CHKChannelCell class]);
+    CHKChannelCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
     if (!cell) {
-        cell = [[VYChannelCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
+        cell = [[CHKChannelCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
     cell.channel = _presentingChannels[indexPath.row];
     

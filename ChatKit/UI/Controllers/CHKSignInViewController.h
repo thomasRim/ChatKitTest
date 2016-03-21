@@ -8,7 +8,7 @@
 
 #import "CHKBaseViewController.h"
 
-@interface VYSignInViewController : CHKBaseViewController
+@interface CHKSignInViewController : CHKBaseViewController
 
 @property (nonatomic, assign) BOOL hideRememberMeCheckbox; // default - NO
 
