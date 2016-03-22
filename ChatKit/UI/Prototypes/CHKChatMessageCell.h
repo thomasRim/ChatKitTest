@@ -10,8 +10,33 @@
 
 @import MagnetMax;
 
+@class CHKChatMessageCell;
+
+@protocol CHKChatMessageDelegate <NSObject>
+
+- (void)chatMessageCell:(CHKChatMessageCell*)cell updatedHeight:(CGFloat)height;
+
+@end
+
 @interface CHKChatMessageCell : UITableViewCell
 
+@property (nonatomic, assign) id<CHKChatMessageDelegate> delegate;
+
+// Content and cell size
 @property (nonatomic, strong) MMXMessage *message;
+@property (nonatomic, strong) UIView *bubbleContentView; // nil - default
+@property (nonatomic, assign) BOOL showSenderName; // NO - default
+@property (nonatomic, assign) BOOL showSenderAvatar; // NO - default
+@property (nonatomic, assign) BOOL showMessageDate; // NO- default
+
+@property (nonatomic, assign, readonly) CGFloat bubbleContentWidthMax;
+
+- (CGFloat)cellHeight;
+
+// UI customization
+
+@property (nonatomic, strong) UIColor *avatarBackground;
+@property (nonatomic, strong) UIColor *bubbleBackground;
+
 
 @end
