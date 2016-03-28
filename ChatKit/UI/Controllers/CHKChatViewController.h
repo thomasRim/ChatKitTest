@@ -7,18 +7,20 @@
 //
 
 #import "CHKBaseViewController.h"
+#import "CHKMessageType.h"
 
 @import MagnetMax;
 
 @protocol CHKChatViewControllerDelegate <NSObject>
 
 @optional
-- (void)messageWillBeSend;
-- (void)messageDidSent;
+- (void)messageWillBeSend:(MMXMessage*)message;
+- (void)messageDidSent:(MMXMessage*)message;
 - (void)messageFailedTotSend:(NSError*)error;
 
 - (UIView*)messageBubbleContentViewForMessage:(MMXMessage*)message maxBubbleWidth:(CGFloat)bubbleWidth;
 - (CGFloat)messageBubbleContentHeightForMessage:(MMXMessage*)message;
+- (MMXMessage*)preparedMessageToSend;
 
 @end
 
@@ -27,5 +29,9 @@
 @property (nonatomic, strong) MMXChannel *chatChannel;
 
 @property (nonatomic, copy) NSString *titleString; // default - description of channel
+
+@property (nonatomic, assign) BOOL showAttachIcon; // NO - default
+
+@property (nonatomic, strong) id<MMEnumAttributeContainer> messageTypeContainer; //CHKMessageType by default
 
 @end

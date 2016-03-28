@@ -15,23 +15,6 @@
 
 @implementation LoginVC
 
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-    
-    [SVProgressHUD showWithStatus:@"Loading.."];
-    
-    [MMUser resumeSession:^{
-        [SVProgressHUD dismiss];
-        
-        [self initMMX];
-        
-    } failure:^(NSError * _Nonnull error) {
-        [SVProgressHUD dismiss];
-        
-    }];
-}
-
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
@@ -41,42 +24,19 @@
     self.minimupPasswordLength = 3;
 }
 
-- (void)shouldSubmitCredentials:(NSString *)login password:(NSString *)password
+- (void)viewWillDisappear:(BOOL)animated
 {
-    [SVProgressHUD showWithStatus:@"Loading.."];
-
-    [[AuthManager shared] loginUserWithEmail:login password:password rememberMe:self.rememberMe callback:^(BOOL success, NSError *error) {
-        [SVProgressHUD dismiss];
-        if (success) {
-            [self initMMX];
-        } else {
-            UIAlertController *alc = [UIAlertController alertControllerWithTitle:@"error" message:[NSString stringWithFormat:@"error %@",error.localizedDescription] preferredStyle:UIAlertControllerStyleAlert];
-            [alc addAction:[UIAlertAction actionWithTitle:@"close" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {}]];
-            [self presentViewController:alc animated:YES completion:nil];
-            
-        }
-    }];
+    [SVProgressHUD dismiss];
 }
 
-
-- (void)initMMX
+- (void)previousSavedSession:(BOOL)savedSessionExist
 {
-    [SVProgressHUD showWithStatus:@"Connecting.."];
-
-    [MagnetMax initModule:[MMX sharedInstance] success:^{
+    if (savedSessionExist) {
+        [SVProgressHUD showWithStatus:@"Loading.."];
+        [self resumeSession:nil];
+    } else {
         [SVProgressHUD dismiss];
-        CHKChannelsViewController *vc = [CHKChannelsViewController new];
-        
-        UINavigationController *nc = [[UINavigationController alloc] initWithRootViewController:vc];
-        
-        [self presentViewController:nc animated:YES completion:nil];
-        
-    } failure:^(NSError * _Nonnull error) {
-        [SVProgressHUD dismiss];
-        UIAlertController *alc = [UIAlertController alertControllerWithTitle:@"error" message:[NSString stringWithFormat:@"error %@",error.localizedDescription] preferredStyle:UIAlertControllerStyleAlert];
-        [alc addAction:[UIAlertAction actionWithTitle:@"close" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {}]];
-        [self presentViewController:alc animated:YES completion:nil];
-    }];
+    }
 }
 
 @end

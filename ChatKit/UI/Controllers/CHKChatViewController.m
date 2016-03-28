@@ -17,12 +17,15 @@
 @property (nonatomic, strong) NSMutableArray *presentingMessages;
 
 //send bar items
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *attachBBI;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *sendBBI;
+
 @property (weak, nonatomic) IBOutlet UIButton *sendBtn;
 @property (weak, nonatomic) IBOutlet UITextField *inputTF;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *btmLC;
 
 @property (nonatomic, strong) MMAttachment *outMessageAttachment;
-@property (nonatomic, copy) NSString *outMessageType;
+@property (nonatomic, assign) CHKMessageType outMessageType;
 
 @end
 
@@ -45,9 +48,11 @@
         
         self.titleString = _chatChannel.summary;
     }
+
+    _messageTypeContainer = [[CHKMessageTypeContainer class] new];
     
     _sendBtn.enabled = NO;
-    _inputTF.frame = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width - 140, _inputTF.frame.size.height);
+    self.showAttachIcon = NO;
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWasShown:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillBeHidden:) name:UIKeyboardWillHideNotification object:nil];
@@ -55,7 +60,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivedMessage:) name:MMXDidReceiveMessageNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textFieldDidChange) name:UITextFieldTextDidChangeNotification object:nil];
     
-    NSDate *endDate = [NSDate dateWithTimeIntervalSince1970:([NSDate date].timeIntervalSince1970 - 24*60*60)];
+    NSDate *endDate = [NSDate dateWithTimeIntervalSince1970:([NSDate date].timeIntervalSince1970 - 7*24*60*60)];
     
     [_chatChannel messagesBetweenStartDate:endDate endDate:[NSDate date] limit:1000 offset:0 ascending:YES success:^(int totalCount, NSArray<MMXMessage *> * _Nonnull messages) {
         _presentingMessages = messages.mutableCopy;
@@ -63,11 +68,6 @@
     } failure:^(NSError * _Nonnull error) {
         
     }];
-}
-
-- (void)viewDidAppear:(BOOL)animated
-{
-    
 }
 
 - (NSArray *)leftBarButtonItems
@@ -79,6 +79,20 @@
 {
     _titleString = titleString;
     self.navigationItem.title = _titleString;
+}
+
+- (void)setShowAttachIcon:(BOOL)showAttachIcon
+{
+    _showAttachIcon = showAttachIcon;
+    if (_showAttachIcon) {
+        _attachBBI.width = _inputTF.frame.size.height;
+    } else {
+        _attachBBI.width = 0.2;
+    }
+    _inputTF.frame = CGRectMake(0,
+                                0,
+                                [UIScreen mainScreen].bounds.size.width - _attachBBI.width - _sendBBI.width - (2*16+2*8),
+                                _inputTF.frame.size.height);
 }
 
 #pragma mark - Actions
@@ -104,15 +118,20 @@
 
 - (IBAction)sendMessage:(UIButton*)sender
 {
-    _outMessageType = @"text";
-    MMXMessage *msg = [MMXMessage messageToChannel:_chatChannel messageContent:@{@"type" : _outMessageType,
-                                                                                 @"message" : _inputTF.text}];
 
-    [self messageWillBeSend];
-    [msg sendWithSuccess:^(NSSet<NSString *> * _Nonnull invalidUsers) {
+    MMXMessage *message = [self preparedMessageToSend];
+
+    if (!message) {
+        [self messageFailedTotSend:[NSError errorWithDomain:@"in-app" code:300 userInfo:@{@"error":@"no message of MMXMessage type to send. Check -preparedMessageToSend method return an object."}]];
+        return;
+    }
+
+    [self messageWillBeSend:message];
+
+    [message sendWithSuccess:^(NSSet<NSString *> * _Nonnull invalidUsers) {
         _inputTF.text = nil;
         [_inputTF resignFirstResponder];
-        [self messageDidSent];
+        [self messageDidSent:message];
     } failure:^(NSError * _Nonnull error) {
         [self messageFailedTotSend:error];
     }];
@@ -160,7 +179,12 @@
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
     }
     [cell.contentView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+
+    MMXMessage *msg = _presentingMessages[indexPath.row];
+    NSLog(@"msg cont for index %@ %@",@(indexPath.row),msg.messageContent);
+
     UIView *newSub = [self contentCellViewForMessage:_presentingMessages[indexPath.row]];
+
     [cell.contentView addSubview:newSub];
     
     return cell;
@@ -188,7 +212,9 @@
             }
         }
     }
-    NSLog(@"we got message \n%@",notification.userInfo);
+    MMXMessage *msg = notification.userInfo[MMXMessageKey];
+
+    NSLog(@"chat %@ /ngot message %@/nfrom %@ %@",msg.channel.name,msg.messageContent,msg.sender.firstName,msg.sender.lastName);
 }
 
 #pragma mark - Content processing
@@ -197,17 +223,25 @@
 {
     UIView *resultView = nil;
     if (message) {
-        NSDictionary *content = message.messageContent;
-        if (content[@"type"]) {
-            if ([content[@"type"] isEqualToString:@"web_template"]) {
-                resultView = [self webCellContentForMessage:message];
-            } else  if ([content[@"type"] isEqualToString:@"text"]){
+
+        CHKMessageType type = [self messageTypeForMessage:message];
+
+        switch (type) {
+            case CHKMessageType_Text: {
                 resultView = [self textCellContentForMessage:message];
-            } else if ([content[@"type"] isEqualToString:@"photo"]) {
-                resultView = [self imageCellContentForMessage:message];
+                break;
             }
-        } else {
-            resultView = [self textCellContentForMessage:message];
+            case CHKMessageType_Photo: {
+                resultView = [self imageCellContentForMessage:message];
+                break;
+            }
+            case CHKMessageType_WebTemplate: {
+                resultView = [self webCellContentForMessage:message];
+                break;
+            }
+            default: {
+                resultView = [self textCellContentForMessage:message];
+            }
         }
     }
     return resultView;
@@ -217,17 +251,27 @@
 {
     CGFloat height = 24;
     if (message) {
-        NSDictionary *content = message.messageContent;
-        if (content[@"type"]) {
-            if ([content[@"type"] isEqualToString:@"web_template"]) {
-                height = 220;
-            } else  if ([content[@"type"] isEqualToString:@"text"]){
+
+        CHKMessageType type = [self messageTypeForMessage:message];
+
+        switch (type) {
+
+            case CHKMessageType_Text: {
                 height = [self textCellContentForMessage:message].frame.size.height;
-            } else if ([content[@"type"] isEqualToString:@"photo"]) {
-                height = [self imageCellContentForMessage:message].frame.size.height;
+                break;
             }
-        } else {
-            height = [self textCellContentForMessage:message].frame.size.height;
+            case CHKMessageType_Photo: {
+                height = [self imageCellContentForMessage:message].frame.size.height;
+                break;
+            }
+            case CHKMessageType_WebTemplate: {
+                height = 220;
+                break;
+            }
+            default : {
+                height = [self textCellContentForMessage:message].frame.size.height;
+                
+            }
         }
     }
     return height;
@@ -349,7 +393,6 @@
                     });
                 }
             });
-
         }
     }
     return iv;
@@ -357,9 +400,46 @@
 
 #pragma mark - ChatViewControllerDelegate
 
-- (void)messageWillBeSend {}
-- (void)messageDidSent {}
+- (MMXMessage *)preparedMessageToSend
+{
+    NSString *messageTypeKey = @"";
+    _outMessageType = CHKMessageType_Text;
+
+    NSDictionary *typesMapp = [[_messageTypeContainer class] mappings];
+
+    for (NSString *key in typesMapp.allKeys) {
+        CHKMessageType type = [typesMapp[key] integerValue];
+        if (type == _outMessageType) {
+            messageTypeKey = key;
+            break;
+        }
+    }
+
+    MMXMessage *message = [MMXMessage messageToChannel:_chatChannel
+                                    messageContent:@{@"type" : messageTypeKey,
+                                                     @"message" : _inputTF.text}];
+    return message;
+}
+- (void)messageWillBeSend:(MMXMessage *)message {}
+- (void)messageDidSent:(MMXMessage *)message {}
 - (void)messageFailedTotSend:(NSError *)error {}
+
+
+
+#pragma mark - Helpers
+
+- (CHKMessageType)messageTypeForMessage:(MMXMessage*)message
+{
+    CHKMessageType type = CHKMessageType_Text;
+
+    NSDictionary *content = message.messageContent;
+    NSDictionary *typesMapp = [[_messageTypeContainer class] mappings];
+
+    type = [typesMapp[content[@"type"]] integerValue];
+
+    return type;
+}
+
 
 #pragma mark - Keyboard
 
@@ -412,6 +492,7 @@
     }
     return YES;
 }
+
 
 
 @end

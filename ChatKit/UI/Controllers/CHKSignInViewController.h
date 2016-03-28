@@ -8,7 +8,17 @@
 
 #import "CHKBaseViewController.h"
 
-@interface CHKSignInViewController : CHKBaseViewController
+@protocol CHKSignInViewController <NSObject>
+
+- (void)previousSavedSession:(BOOL)savedSessionExist;
+
+@end
+
+@interface CHKSignInViewController : CHKBaseViewController<CHKSignInViewController>
+
+/**
+ *  Customisation Properties
+ */
 
 @property (nonatomic, assign) BOOL hideRememberMeCheckbox; // default - NO
 
@@ -22,6 +32,12 @@
 
 @property (nonatomic, assign) NSInteger minimupPasswordLength; //default = 0;
 
+/**
+ *  
+ */
+
 - (void)shouldSubmitCredentials:(NSString*)login password:(NSString*)password;
+
+- (void)resumeSession:(void(^)(BOOL success))completition;
 
 @end

@@ -23,6 +23,7 @@
 		7A73D3111C8DD8D80078EC47 /* CHKChannelsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A73D3101C8DD8D80078EC47 /* CHKChannelsViewController.m */; };
 		7A73D3141C8DDA420078EC47 /* CHKChatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A73D3131C8DDA420078EC47 /* CHKChatViewController.m */; };
 		7A73D31B1C8DFA410078EC47 /* MagnetMax.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7A73D31A1C8DFA410078EC47 /* MagnetMax.plist */; };
+		7A8835CA1CA97AE40098428E /* CHKMessageType.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A8835C91CA97AE40098428E /* CHKMessageType.m */; };
 		7A8E8C461C9B563F00AA9545 /* CHKChatViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7A8E8C451C9B563F00AA9545 /* CHKChatViewController.xib */; };
 		7AA578301C9078F9005EB630 /* AuthManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AA5782F1C9078F9005EB630 /* AuthManager.m */; };
 		7AA578331C908697005EB630 /* CHKContactsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AA578321C908697005EB630 /* CHKContactsViewController.m */; };
@@ -60,6 +61,8 @@
 		7A73D3121C8DDA420078EC47 /* CHKChatViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = CHKChatViewController.h; path = UI/Controllers/CHKChatViewController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		7A73D3131C8DDA420078EC47 /* CHKChatViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; name = CHKChatViewController.m; path = UI/Controllers/CHKChatViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		7A73D31A1C8DFA410078EC47 /* MagnetMax.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = MagnetMax.plist; sourceTree = "<group>"; };
+		7A8835C81CA97AE40098428E /* CHKMessageType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CHKMessageType.h; path = UI/Prototypes/CHKMessageType.h; sourceTree = "<group>"; };
+		7A8835C91CA97AE40098428E /* CHKMessageType.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CHKMessageType.m; path = UI/Prototypes/CHKMessageType.m; sourceTree = "<group>"; };
 		7A8E8C451C9B563F00AA9545 /* CHKChatViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = CHKChatViewController.xib; path = UI/Controllers/CHKChatViewController.xib; sourceTree = "<group>"; };
 		7AA5782E1C9078F9005EB630 /* AuthManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AuthManager.h; sourceTree = "<group>"; };
 		7AA5782F1C9078F9005EB630 /* AuthManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AuthManager.m; sourceTree = "<group>"; };
@@ -216,6 +219,8 @@
 				7A73D30D1C8DD8CB0078EC47 /* CHKChannelCell.m */,
 				7A48F0961CA058EE00BA9657 /* CHKChatMessageCell.h */,
 				7A48F0971CA058EE00BA9657 /* CHKChatMessageCell.m */,
+				7A8835C81CA97AE40098428E /* CHKMessageType.h */,
+				7A8835C91CA97AE40098428E /* CHKMessageType.m */,
 			);
 			name = Prototypes;
 			sourceTree = "<group>";
@@ -379,6 +384,7 @@
 				7A1C6D451C98A11E00FAB31E /* CHKBaseViewController.m in Sources */,
 				7AA749EF1CA0A0710033833B /* CHKUtils.m in Sources */,
 				7A73D3141C8DDA420078EC47 /* CHKChatViewController.m in Sources */,
+				7A8835CA1CA97AE40098428E /* CHKMessageType.m in Sources */,
 				7AA578331C908697005EB630 /* CHKContactsViewController.m in Sources */,
 				7A73D30E1C8DD8CB0078EC47 /* CHKChannelCell.m in Sources */,
 			);

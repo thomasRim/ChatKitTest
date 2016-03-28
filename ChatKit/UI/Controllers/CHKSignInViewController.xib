@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9532" systemVersion="15D21" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9530"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="CHKSignInViewController">
@@ -15,6 +15,7 @@
                 <outlet property="logoWidthLC" destination="NYW-5Z-ZV3" id="Naz-9i-9pT"/>
                 <outlet property="passwordTF" destination="7e1-QL-LFW" id="tQc-IL-rqj"/>
                 <outlet property="rememberCheckboxContent" destination="Buc-eo-u7M" id="484-L6-0g0"/>
+                <outlet property="spinner" destination="Bf5-qz-5uH" id="h9i-C6-9d4"/>
                 <outlet property="view" destination="QIh-x8-fYG" id="DYO-a2-lCH"/>
             </connections>
         </placeholder>
@@ -90,6 +91,10 @@
                         <constraint firstAttribute="height" constant="80" id="as0-ye-Teq"/>
                     </constraints>
                 </imageView>
+                <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="Bf5-qz-5uH">
+                    <rect key="frame" x="282" y="282" width="37" height="37"/>
+                    <color key="color" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                </activityIndicatorView>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
             <constraints>
@@ -100,11 +105,13 @@
                 <constraint firstItem="Buc-eo-u7M" firstAttribute="top" secondItem="7e1-QL-LFW" secondAttribute="bottom" constant="8" id="IPI-TL-dox"/>
                 <constraint firstItem="hCi-dK-9u5" firstAttribute="top" secondItem="QIh-x8-fYG" secondAttribute="top" constant="120" id="Q62-rh-Pa6"/>
                 <constraint firstAttribute="trailing" secondItem="mn1-PM-htm" secondAttribute="trailing" constant="40" id="Sgt-qw-8Qb"/>
+                <constraint firstItem="Bf5-qz-5uH" firstAttribute="centerY" secondItem="QIh-x8-fYG" secondAttribute="centerY" id="a5z-ge-gIf"/>
                 <constraint firstAttribute="trailing" secondItem="7e1-QL-LFW" secondAttribute="trailing" constant="40" id="aEi-rv-GWV"/>
                 <constraint firstItem="mn1-PM-htm" firstAttribute="top" secondItem="Buc-eo-u7M" secondAttribute="bottom" constant="8" id="dfV-8v-GQU"/>
                 <constraint firstItem="Buc-eo-u7M" firstAttribute="centerX" secondItem="QIh-x8-fYG" secondAttribute="centerX" id="liR-la-HSH"/>
                 <constraint firstItem="hCi-dK-9u5" firstAttribute="centerX" secondItem="QIh-x8-fYG" secondAttribute="centerX" id="mU5-Tz-L94"/>
                 <constraint firstItem="WS4-j6-UFN" firstAttribute="leading" secondItem="QIh-x8-fYG" secondAttribute="leading" constant="40" id="pWS-xX-YrD"/>
+                <constraint firstItem="Bf5-qz-5uH" firstAttribute="centerX" secondItem="QIh-x8-fYG" secondAttribute="centerX" id="tuY-Zt-HIw"/>
                 <constraint firstItem="WS4-j6-UFN" firstAttribute="top" secondItem="hCi-dK-9u5" secondAttribute="bottom" constant="26" id="uWf-Pp-mRb"/>
             </constraints>
             <point key="canvasLocation" x="415" y="446"/>

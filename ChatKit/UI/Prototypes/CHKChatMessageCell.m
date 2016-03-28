@@ -43,6 +43,7 @@
 - (void)updateUI
 {
     //
+
 }
 
 - (void)setMessage:(MMXMessage *)message

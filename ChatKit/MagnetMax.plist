@@ -3,10 +3,10 @@
 <plist version="1.0">
 <dict>
 	<key>BaseURL</key>
-	<string>http://estee-mac-stage-mms.magnet.com:8443/api</string>
+	<string>https://sandbox.magnet.com/mobile/api</string>
 	<key>ClientID</key>
-	<string>bfb45779-c1a8-4e7a-80dc-756be9040a5e</string>
+	<string>55f19101-dc55-40dc-925c-4773fa0eb429</string>
 	<key>ClientSecret</key>
-	<string>xovuL_8_HGaLI9d2SlMexj6ZBwWgyv5QjHqMwjQO_Bk</string>
+	<string>eJ7v8lBNxbsH8vTSRB7KrLeIFtMcOr7QY2mTkCZgZt4</string>
 </dict>
 </plist>

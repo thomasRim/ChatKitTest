@@ -9,6 +9,7 @@
 #import "CHKSignInViewController.h"
 
 #import "CHKUtils.h"
+#import "CHKChannelsViewController.h"
 
 @interface CHKSignInViewController ()<UITextFieldDelegate>
 
@@ -23,6 +24,8 @@
 
 @property (weak, nonatomic) IBOutlet UIView *rememberCheckboxContent;
 @property (weak, nonatomic) IBOutlet UIImageView *checkboxIV;
+
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *spinner;
 
 @end
 
@@ -40,6 +43,14 @@
     self.logoIV.image = [CHKUtils chk_imageNamed:@"logo_magnet"];
     self.rememberMe = YES;
     self.navigationController.navigationBarHidden = YES;
+
+    if ([MMUser currentUser]) {
+        [self previousSavedSession:YES];
+    } else if ([MMUser savedUser]) {
+        [self previousSavedSession:YES];
+    } else {
+        [self previousSavedSession:NO];
+    }
 }
 
 #pragma mark - Customosation
@@ -69,9 +80,54 @@
     _logoIV.image = _logoImage;
 }
 
+- (void)previousSavedSession:(BOOL)savedSessionExist
+{
+}
+
+
+- (void)resumeSession:(void (^)(BOOL))completition
+{
+    [_spinner startAnimating];
+
+    [MMUser resumeSession:^{
+        [_spinner stopAnimating];
+        if (completition) {
+            completition(YES);
+        } else {
+            [self presentDefaultChats];
+        }
+    } failure:^(NSError * _Nonnull error) {
+        [_spinner stopAnimating];
+        completition?completition(NO):nil;
+    }];
+}
+
 - (void)shouldSubmitCredentials:(NSString *)login password:(NSString *)password
 {
-    NSLog(@"did tap shouldSubmit");
+    NSLog(@"did tap shouldSubmit. You may override this method for your own catch");
+
+
+    NSURLCredential *creds = [NSURLCredential credentialWithUser:login password:password persistence:NSURLCredentialPersistenceNone];
+    [_spinner startAnimating];
+
+    [MMUser login:creds rememberMe:_rememberMe success:^{
+        [_spinner stopAnimating];
+        [self presentDefaultChats];
+    } failure:^(NSError * _Nonnull error) {
+        [_spinner stopAnimating];
+
+    }];
+}
+
+- (void)presentDefaultChats
+{
+    CHKChannelsViewController *chnls = [CHKChannelsViewController new];
+    if (self.navigationController) {
+        [self.navigationController pushViewController:chnls animated:YES];
+    } else {
+        UINavigationController *nc = [[UINavigationController alloc] initWithRootViewController:chnls];
+        [self presentViewController:nc animated:YES completion:nil];
+    }
 }
 
 #pragma mark - Data operation

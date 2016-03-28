@@ -84,7 +84,10 @@
 - (void)messageIncome:(NSNotification*)notification
 {
     [self loadChannels];
-    NSLog(@"Got message income notification\n %@",notification);
+    NSLog(@"Got message income notification\n %@",notification.name);
+
+    MMXMessage *msg = notification.userInfo[MMXMessageKey];
+    NSLog(@"channel %@ /n message %@/nfrom %@ %@",msg.channel.name,msg.messageContent,msg.sender.firstName,msg.sender.lastName);
 }
 
 #pragma mark - Interface Methods
