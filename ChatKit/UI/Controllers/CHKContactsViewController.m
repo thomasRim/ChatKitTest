@@ -159,7 +159,10 @@
 {
     if (_createBBI) {
         if ([tableView indexPathsForSelectedRows].count == 0) {
+            [_createBBI setTitle:@"Create"];
             _createBBI.enabled = NO;
+        } else {
+            [_createBBI setTitle:[NSString stringWithFormat:@"Create(%@)",@([tableView indexPathsForSelectedRows].count)]];
         }
     }
 }
@@ -167,6 +170,9 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (_createBBI) {
+        
+        [_createBBI setTitle:[NSString stringWithFormat:@"Create(%@)",@([tableView indexPathsForSelectedRows].count)]];
+
         _createBBI.enabled = YES;
     }
 }
