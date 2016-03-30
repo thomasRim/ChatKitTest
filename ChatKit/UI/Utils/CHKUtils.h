@@ -15,4 +15,6 @@
 
 + (UIImage*)chk_imageNamed:(NSString*)name;
 
++ (void)chk_loadImageByUrl:(NSURL*)url toImageView:(UIImageView*)imageView animateLoading:(BOOL)aniLoad;
+
 @end

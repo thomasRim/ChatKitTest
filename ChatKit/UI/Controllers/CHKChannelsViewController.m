@@ -22,6 +22,8 @@
 
 @property (weak, nonatomic) IBOutlet UITableView *channelsTable;
 
+@property (nonatomic, strong) NSMutableArray *channelDetails;
+
 @property (nonatomic, strong) UIRefreshControl *tableRefreshControl;
 
 
@@ -194,6 +196,11 @@
         [_tableRefreshControl endRefreshing];
         NSLog(@"some error due loading default channels \n%@",error);
     }];
+}
+
+- (void)loadChannelDetails
+{
+    
 }
 
 #pragma mark UITableViewDelegate, UITableViewDataSource

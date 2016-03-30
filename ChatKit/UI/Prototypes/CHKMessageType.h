@@ -17,7 +17,8 @@ typedef NS_ENUM(NSUInteger, CHKMessageType){
     CHKMessageType_Video,
     CHKMessageType_Audio,
     CHKMessageType_Link,
-    CHKMessageType_WebTemplate
+    CHKMessageType_WebTemplate,
+    CHKMessageType_SystemMessage
 };
 
 @interface CHKMessageTypeContainer : NSObject<MMEnumAttributeContainer>

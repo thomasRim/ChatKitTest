@@ -9,12 +9,22 @@
 #import "CHKContactsViewController.h"
 
 #import "CHKChatViewController.h"
+#import "CHKUtils.h"
+#import "CHKContactCell.h"
+#import "CHKSelectedContactsView.h"
 
-@interface CHKContactsViewController ()
+#define kCHKSelectedHeight 50
+
+@interface CHKContactsViewController ()<UISearchBarDelegate, CHKSelectedContactsViewDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *contactsTable;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *cancelBBI;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *createBBI;
+
+@property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
+
+@property (nonatomic, strong) CHKSelectedContactsView *selectedCV;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *topLC;
 
 @property (nonatomic, strong) NSMutableArray *presentingUsers;
 
@@ -36,23 +46,18 @@
         self.navigationItem.rightBarButtonItems = [self rightBarButtonItems];
         self.navigationItem.title = [self titleString];
     }
+    _enableSearch = YES;
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+
     if (_contacts) {
         _presentingUsers = _contacts.mutableCopy;
     } else {
-        
-        [MMUser searchUsers:@"firstName:*" limit:1000 offset:0 sort:@"firstName:asc" success:^(NSArray<MMUser *> * _Nonnull users) {
-            _contacts = users;
-            NSLog(@"contacts %@",@(users.count));
-            _presentingUsers = _contacts.mutableCopy;
-            [_contactsTable reloadData];
-        } failure:^(NSError * _Nonnull error) {
-            NSLog(@"search users err %@",error);
-        }];
+        [self searchUsers:nil];
+
     }
 }
 
@@ -78,6 +83,21 @@
     return @"Contacts";
 }
 
+- (void)setEnableSearch:(BOOL)enableSearch
+{
+    _enableSearch = enableSearch;
+    
+    if (_enableSearch) {
+        [_searchBar sizeToFit];
+        _contactsTable.tableHeaderView = _searchBar;
+    } else {
+        _contactsTable.tableHeaderView = nil;
+    }
+    _searchBar.hidden = !_enableSearch;
+
+    [_contactsTable beginUpdates];
+    [_contactsTable endUpdates];
+}
 
 - (void)shouldCreateChatWithSelectedUsers:(NSArray <MMUser*> *)users;
 {
@@ -123,6 +143,11 @@
 
 #pragma mark UITableViewDelegate, UITableViewDataSource
 
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return kCHK_ContactCellHeight;
+}
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     return _presentingUsers.count;
@@ -130,50 +155,87 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSString *identifier = @"contactCell";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
+    NSString *identifier = NSStringFromClass([CHKContactCell class]);
+
+    CHKContactCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
     if (!cell) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
-        
-        cell.imageView.image = [UIImage imageNamed:@"user_default"];
+        cell = [[CHKContactCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
     MMUser *user = _presentingUsers[indexPath.row];
-    cell.textLabel.text = [NSString stringWithFormat:@"%@%@%@",
-                           user.firstName.length?user.firstName:@"",
-                           user.lastName.length?@"":@"",
-                           user.lastName.length?user.lastName:@""];
-    
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        NSData *data = [NSData dataWithContentsOfURL:user.avatarURL];
-        if (data.length) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                cell.imageView.image = [UIImage imageWithData:data];
-            });
-        }
-    });
+    cell.user = user;
     
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    [_searchBar resignFirstResponder];
+    _searchBar.showsCancelButton = NO;
+
     if (_createBBI) {
+
         if ([tableView indexPathsForSelectedRows].count == 0) {
-            [_createBBI setTitle:@"Create"];
             _createBBI.enabled = NO;
+            [_selectedCV removeFromSuperview];
+            [UIView animateWithDuration:0.2 animations:^{
+                [self.view layoutIfNeeded];
+                _topLC.constant = 0;
+            }];
         } else {
-            [_createBBI setTitle:[NSString stringWithFormat:@"Create(%@)",@([tableView indexPathsForSelectedRows].count)]];
+            [_selectedCV removeContact:_presentingUsers[indexPath.row]];
         }
     }
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    [_searchBar resignFirstResponder];
+    _searchBar.showsCancelButton = NO;
+
     if (_createBBI) {
-        
-        [_createBBI setTitle:[NSString stringWithFormat:@"Create(%@)",@([tableView indexPathsForSelectedRows].count)]];
+        if (_topLC.constant > 0) {
+            [_selectedCV addContact:_presentingUsers[indexPath.row]];
+        } else {
+            _selectedCV = [[CHKSelectedContactsView alloc] initWithFrame:CGRectMake(0, 64, self.view.frame.size.width, kCHKSelectedHeight)];
+            _selectedCV.delegate = self;
+            [UIView animateWithDuration:0.3 animations:^{
+                [self.view layoutIfNeeded];
+                _topLC.constant = kCHKSelectedHeight;
+            } completion:^(BOOL finished) {
+                [self.view addSubview:_selectedCV];
+                [_selectedCV addContact:_presentingUsers[indexPath.row]];
+            }];
+        }
 
         _createBBI.enabled = YES;
+    }
+}
+
+#pragma mark - CHKSelectedContactsViewDelegate
+
+- (void)removedContactByTap:(MMUser *)contact
+{
+    for (MMUser *user in _presentingUsers) {
+        if ([user.userID isEqualToString:contact.userID]) {
+            NSInteger index = [_presentingUsers indexOfObject:user];
+            [_contactsTable deselectRowAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0] animated:YES];
+            [self tableView:_contactsTable didDeselectRowAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0]];
+            break;
+        }
+    }
+    
+}
+
+- (void)checkSelectedContacts
+{
+    NSArray *selectedContacts = _selectedCV.selectedContacts;
+    for (MMUser *userPresent in _presentingUsers) {
+        for (MMUser *userSelect in selectedContacts) {
+            if ([userSelect.userID isEqualToString:userPresent.userID]) {
+                NSInteger indexPresent = [_presentingUsers indexOfObject:userPresent];
+                [_contactsTable selectRowAtIndexPath:[NSIndexPath indexPathForRow:indexPresent inSection:0] animated:NO scrollPosition:UITableViewScrollPositionNone];
+            }
+        }
     }
 }
 
@@ -208,6 +270,51 @@
             [self.navigationController popViewControllerAnimated:YES];
         }
     }
+}
+
+#pragma mark - UISearchBarDelegate
+
+- (void)searchUsers:(NSString*)searchString
+{
+
+    NSString *searchPredStr = searchString;
+    if (!searchString.length || [searchString isEqualToString:@""] || !searchString) {
+        searchPredStr = @"firstName:*";
+    } else {
+        searchPredStr = [NSString stringWithFormat:@"userName:*%@* OR firstName:*%@* OR lastName:*%@",searchString,searchString,searchString];
+    }
+
+    [MMUser searchUsers:searchPredStr limit:1000 offset:0 sort:@"firstName:asc" success:^(NSArray<MMUser *> * _Nonnull users) {
+        _contacts = users;
+        NSLog(@"contacts %@",@(users.count));
+        _presentingUsers = _contacts.mutableCopy;
+        [_contactsTable reloadData];
+
+        [self checkSelectedContacts];
+
+    } failure:^(NSError * _Nonnull error) {
+        NSLog(@"search users err %@",error);
+    }];
+}
+
+- (BOOL)searchBarShouldBeginEditing:(UISearchBar *)searchBar
+{
+    searchBar.showsCancelButton = YES;
+    return YES;
+}
+
+- (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar
+{
+    [searchBar resignFirstResponder];
+    searchBar.showsCancelButton = NO;
+    searchBar.text = nil;
+    [self searchUsers:nil];
+}
+
+- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar
+{
+    [searchBar resignFirstResponder];
+    [self searchUsers:searchBar.text];
 }
 
 @end

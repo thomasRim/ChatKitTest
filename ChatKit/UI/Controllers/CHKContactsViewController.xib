@@ -10,6 +10,8 @@
                 <outlet property="cancelBBI" destination="PEx-PZ-nIs" id="L4g-E3-daM"/>
                 <outlet property="contactsTable" destination="eOE-sp-ppY" id="M2T-dL-zQ6"/>
                 <outlet property="createBBI" destination="R7f-L8-TNs" id="DZ8-Ac-BFI"/>
+                <outlet property="searchBar" destination="F0L-pm-I7Z" id="wzs-Nu-QfN"/>
+                <outlet property="topLC" destination="hTL-EF-8aU" id="mer-Lx-bGz"/>
                 <outlet property="view" destination="y4I-13-HfF" id="aAf-gu-cmo"/>
             </connections>
         </placeholder>
@@ -21,6 +23,14 @@
                 <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" allowsMultipleSelection="YES" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="eOE-sp-ppY">
                     <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <searchBar key="tableHeaderView" contentMode="redraw" searchBarStyle="minimal" placeholder="Search" id="F0L-pm-I7Z">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="44"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="search"/>
+                        <connections>
+                            <outlet property="delegate" destination="-1" id="hvf-GQ-MmR"/>
+                        </connections>
+                    </searchBar>
                     <connections>
                         <outlet property="dataSource" destination="-1" id="8Y5-Tb-lwH"/>
                         <outlet property="delegate" destination="-1" id="tE1-9y-GIE"/>
@@ -41,7 +51,7 @@
                 <action selector="leftBtnPress:" destination="-1" id="t33-KI-vir"/>
             </connections>
         </barButtonItem>
-        <barButtonItem title="Create" id="R7f-L8-TNs" userLabel="right_create">
+        <barButtonItem title="Next" id="R7f-L8-TNs" userLabel="right_create">
             <connections>
                 <action selector="rightBtnPress:" destination="-1" id="TCJ-cR-nr5"/>
             </connections>

@@ -13,7 +13,7 @@
 @interface CHKContactsViewController : CHKBaseViewController <UITableViewDelegate, UITableViewDataSource>
 
 /**
- *  Defines if Search bar will be visible. and enabled for searching.
+ *  Defines if Search bar will be visible. and enabled for searching. YES - default
  */
 @property (nonatomic, assign) BOOL enableSearch;
 

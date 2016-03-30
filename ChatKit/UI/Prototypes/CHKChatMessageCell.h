@@ -29,6 +29,8 @@
 @property (nonatomic, assign) BOOL showSenderAvatar; // NO - default
 @property (nonatomic, assign) BOOL showMessageDate; // NO- default
 
+@property (nonatomic, assign) CGFloat avatarDimencionsSize; // 30(x30) by default
+
 @property (nonatomic, assign, readonly) CGFloat bubbleContentWidthMax;
 
 - (CGFloat)cellHeight;

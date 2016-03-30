@@ -18,7 +18,8 @@
              @"video" : @(CHKMessageType_Video),
              @"audio" : @(CHKMessageType_Audio),
              @"url" : @(CHKMessageType_Link),
-             @"web_template" : @(CHKMessageType_WebTemplate)
+             @"web_template" : @(CHKMessageType_WebTemplate),
+             @"system" :@(CHKMessageType_SystemMessage)
              };
 }
 

@@ -265,7 +265,7 @@
                 break;
             }
             case CHKMessageType_WebTemplate: {
-                height = 220;
+                height = 200;
                 break;
             }
             default : {
@@ -343,14 +343,16 @@
     UIWebView *webV = [[UIWebView alloc] initWithFrame:CGRectMake(0,
                                                                   0,
                                                                   self.view.frame.size.width-2*45,
-                                                                  215)];
+                                                                  195)];
     webV.scalesPageToFit = YES;
     webV.scrollView.scrollEnabled = NO;
     webV.delegate = self;
-    
+
+    webV.scrollView.maximumZoomScale = 1;
+    webV.scrollView.minimumZoomScale = 0.1;
+
     webV.layer.cornerRadius = 10;
     webV.layer.masksToBounds = YES;
-    webV.backgroundColor = [UIColor grayColor];
     
     [webV loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:urlStr]]];
     
@@ -465,6 +467,7 @@
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView
 {
+    [webView.scrollView setZoomScale:0.1];
     NSLog(@"did start load web");
 }
 

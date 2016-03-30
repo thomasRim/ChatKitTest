@@ -10,6 +10,9 @@
 		270992925BF65A336C487E89 /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9ACF9791F7A3ADAF0E61DEE /* Pods.framework */; };
 		7A0667271C99ED4600822EC3 /* CHKSignInViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7A0667261C99ED4600822EC3 /* CHKSignInViewController.xib */; };
 		7A06672A1C99F01D00822EC3 /* LoginVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A0667291C99F01D00822EC3 /* LoginVC.m */; };
+		7A19853B1CAB020D00DB8A72 /* CHKContactCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A19853A1CAB020D00DB8A72 /* CHKContactCell.m */; };
+		7A19853E1CAB100700DB8A72 /* CHKAvatarView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A19853D1CAB100700DB8A72 /* CHKAvatarView.m */; };
+		7A1985421CAB3EE500DB8A72 /* CHKSelectedContactsView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A1985411CAB3EE500DB8A72 /* CHKSelectedContactsView.m */; };
 		7A1C6D421C988E5F00FAB31E /* CHKSignInViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A1C6D411C988E5F00FAB31E /* CHKSignInViewController.m */; };
 		7A1C6D451C98A11E00FAB31E /* CHKBaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A1C6D441C98A11E00FAB31E /* CHKBaseViewController.m */; };
 		7A2E9F241C874A52000BC70C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A2E9F231C874A52000BC70C /* main.m */; };
@@ -39,6 +42,13 @@
 		7A0667261C99ED4600822EC3 /* CHKSignInViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = CHKSignInViewController.xib; path = UI/Controllers/CHKSignInViewController.xib; sourceTree = "<group>"; };
 		7A0667281C99F01D00822EC3 /* LoginVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = LoginVC.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		7A0667291C99F01D00822EC3 /* LoginVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = LoginVC.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		7A1985391CAB020D00DB8A72 /* CHKContactCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CHKContactCell.h; path = UI/Prototypes/CHKContactCell.h; sourceTree = "<group>"; };
+		7A19853A1CAB020D00DB8A72 /* CHKContactCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CHKContactCell.m; path = UI/Prototypes/CHKContactCell.m; sourceTree = "<group>"; };
+		7A19853C1CAB100700DB8A72 /* CHKAvatarView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CHKAvatarView.h; path = UI/Prototypes/CHKAvatarView.h; sourceTree = "<group>"; };
+		7A19853D1CAB100700DB8A72 /* CHKAvatarView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CHKAvatarView.m; path = UI/Prototypes/CHKAvatarView.m; sourceTree = "<group>"; };
+		7A19853F1CAB305A00DB8A72 /* CHKConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CHKConstants.h; path = UI/Utils/CHKConstants.h; sourceTree = "<group>"; };
+		7A1985401CAB3EE500DB8A72 /* CHKSelectedContactsView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CHKSelectedContactsView.h; path = UI/Prototypes/CHKSelectedContactsView.h; sourceTree = "<group>"; };
+		7A1985411CAB3EE500DB8A72 /* CHKSelectedContactsView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CHKSelectedContactsView.m; path = UI/Prototypes/CHKSelectedContactsView.m; sourceTree = "<group>"; };
 		7A1C6D401C988E5F00FAB31E /* CHKSignInViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = CHKSignInViewController.h; path = UI/Controllers/CHKSignInViewController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		7A1C6D411C988E5F00FAB31E /* CHKSignInViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; name = CHKSignInViewController.m; path = UI/Controllers/CHKSignInViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		7A1C6D431C98A11E00FAB31E /* CHKBaseViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CHKBaseViewController.h; path = UI/Controllers/CHKBaseViewController.h; sourceTree = "<group>"; };
@@ -112,8 +122,8 @@
 				7A1C6D441C98A11E00FAB31E /* CHKBaseViewController.m */,
 				7A1C6D3F1C988E4300FAB31E /* SignIn */,
 				7A3BD4161C8750DD00F072AC /* ChatsList */,
-				7A3BD4171C8750F200F072AC /* Contacts */,
 				7A3BD4181C8750FD00F072AC /* Chat */,
+				7A3BD4171C8750F200F072AC /* Contacts */,
 			);
 			name = ViewControllers;
 			sourceTree = "<group>";
@@ -219,8 +229,14 @@
 				7A73D30D1C8DD8CB0078EC47 /* CHKChannelCell.m */,
 				7A48F0961CA058EE00BA9657 /* CHKChatMessageCell.h */,
 				7A48F0971CA058EE00BA9657 /* CHKChatMessageCell.m */,
+				7A1985391CAB020D00DB8A72 /* CHKContactCell.h */,
+				7A19853A1CAB020D00DB8A72 /* CHKContactCell.m */,
 				7A8835C81CA97AE40098428E /* CHKMessageType.h */,
 				7A8835C91CA97AE40098428E /* CHKMessageType.m */,
+				7A19853C1CAB100700DB8A72 /* CHKAvatarView.h */,
+				7A19853D1CAB100700DB8A72 /* CHKAvatarView.m */,
+				7A1985401CAB3EE500DB8A72 /* CHKSelectedContactsView.h */,
+				7A1985411CAB3EE500DB8A72 /* CHKSelectedContactsView.m */,
 			);
 			name = Prototypes;
 			sourceTree = "<group>";
@@ -231,8 +247,8 @@
 				7ADFB04A1C9CB9F00064AB50 /* CHKAssets.bundle */,
 				7A0667261C99ED4600822EC3 /* CHKSignInViewController.xib */,
 				7AA578361C9086D8005EB630 /* CHKChannelsViewController.xib */,
-				7AA578341C9086B4005EB630 /* CHKContactsViewController.xib */,
 				7A8E8C451C9B563F00AA9545 /* CHKChatViewController.xib */,
+				7AA578341C9086B4005EB630 /* CHKContactsViewController.xib */,
 			);
 			name = Sources;
 			sourceTree = "<group>";
@@ -242,6 +258,7 @@
 			children = (
 				7AA749ED1CA0A0710033833B /* CHKUtils.h */,
 				7AA749EE1CA0A0710033833B /* CHKUtils.m */,
+				7A19853F1CAB305A00DB8A72 /* CHKConstants.h */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -374,9 +391,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7A19853E1CAB100700DB8A72 /* CHKAvatarView.m in Sources */,
 				7A1C6D421C988E5F00FAB31E /* CHKSignInViewController.m in Sources */,
 				7A06672A1C99F01D00822EC3 /* LoginVC.m in Sources */,
 				7A2E9F271C874A52000BC70C /* AppDelegate.m in Sources */,
+				7A19853B1CAB020D00DB8A72 /* CHKContactCell.m in Sources */,
 				7A73D3111C8DD8D80078EC47 /* CHKChannelsViewController.m in Sources */,
 				7A2E9F241C874A52000BC70C /* main.m in Sources */,
 				7AA578301C9078F9005EB630 /* AuthManager.m in Sources */,
@@ -385,6 +404,7 @@
 				7AA749EF1CA0A0710033833B /* CHKUtils.m in Sources */,
 				7A73D3141C8DDA420078EC47 /* CHKChatViewController.m in Sources */,
 				7A8835CA1CA97AE40098428E /* CHKMessageType.m in Sources */,
+				7A1985421CAB3EE500DB8A72 /* CHKSelectedContactsView.m in Sources */,
 				7AA578331C908697005EB630 /* CHKContactsViewController.m in Sources */,
 				7A73D30E1C8DD8CB0078EC47 /* CHKChannelCell.m in Sources */,
 			);
@@ -500,6 +520,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = ChatKit/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = magnet.ChatKit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -512,6 +533,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = ChatKit/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = magnet.ChatKit;
 				PRODUCT_NAME = "$(TARGET_NAME)";

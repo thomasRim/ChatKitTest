@@ -44,6 +44,7 @@
     self.rememberMe = YES;
     self.navigationController.navigationBarHidden = YES;
 
+
     if ([MMUser currentUser]) {
         [self previousSavedSession:YES];
     } else if ([MMUser savedUser]) {
