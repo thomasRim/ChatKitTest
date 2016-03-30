@@ -10,6 +10,7 @@
 
 #import "CHKChatViewController.h"
 #import "CHKUtils.h"
+#import "CHKConstants.h"
 #import "CHKContactCell.h"
 #import "CHKSelectedContactsView.h"
 
@@ -160,6 +161,8 @@
     CHKContactCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
     if (!cell) {
         cell = [[CHKContactCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
+        cell.selectedBackgroundColor = RGB_HEX(0xc9e0e5);
+        cell.normalUsernameColor = [UIColor lightGrayColor];
     }
     MMUser *user = _presentingUsers[indexPath.row];
     cell.user = user;

@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-#define kCHK_ContactCellHeight 40
+#define kCHK_ContactCellHeight 45
 
 @import MagnetMax;
 
@@ -16,4 +16,8 @@
 
 @property (nonatomic, strong) MMUser *user;
 
+//custom
+@property (nonatomic, strong) UIColor *selectedBackgroundColor;
+@property (nonatomic, strong) UIColor *selectedUsernameColor;
+@property (nonatomic, strong) UIColor *normalUsernameColor;
 @end
