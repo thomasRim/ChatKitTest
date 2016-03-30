@@ -15,8 +15,6 @@
 
 @interface CHKChannelsViewController ()
 
-@property (nonatomic,strong) NSMutableArray <MMXChannel*> *presentingChannels;
-
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *cancelBBI;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *createBBI;
 
@@ -41,10 +39,9 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-   
-//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(messageSendError:) name:MMXMessageSendErrorNotification object:nil];
-    
+
+    _channelDetails = @[].mutableCopy;
+
 }
 
 - (void)setupUI
@@ -56,21 +53,19 @@
     [_channelsTable addSubview:_tableRefreshControl];
     [_tableRefreshControl addTarget:self action:@selector(loadChannels) forControlEvents:UIControlEventValueChanged];
 
-    
+
     if (self.navigationController) {
         self.navigationItem.leftBarButtonItems = [self leftBarButtonItems];
         self.navigationItem.rightBarButtonItems = [self rightBarButtonItems];
         
         self.navigationItem.title = [self titleString];
         self.navigationController.navigationBarHidden = NO;
-
     }
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
-    if (_channels) {
-        _presentingChannels = _channels.mutableCopy;
+    if (_channelDetails.count) {
         [_channelsTable reloadData];
     } else {
         //loading default subscribed channels
@@ -149,14 +144,15 @@
 {
     UITableViewRowAction *defaultActionButton = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:@"Leave" handler:^(UITableViewRowAction *action, NSIndexPath *indexPath)
                                     {
-                                        if (_presentingChannels.count > 0 && indexPath.row < _presentingChannels.count) {
-                                            MMXChannel *channelToRemove = _presentingChannels[indexPath.row];
-                                            [channelToRemove unSubscribeWithSuccess:^{
+                                        if (_channelDetails.count > 0 && indexPath.row < _channelDetails.count) {
+                                            MMXChannelDetailResponse *channelToRemove = _channelDetails[indexPath.row];
+                                            [channelToRemove.channel unSubscribeWithSuccess:^{
                                                 NSLog(@"channel unsubscribed");
                                             } failure:^(NSError * _Nonnull error) {
                                                 NSLog(@"channel unsubscribe error %@",error);
                                             }];
-                                            [self.presentingChannels removeObjectAtIndex:indexPath.row];
+                                            [self.channelDetails removeObjectAtIndex:indexPath.row];
+                                            [_channelsTable deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationLeft];
                                         }
                                     }];
     defaultActionButton.backgroundColor = [UIColor redColor];
@@ -187,23 +183,41 @@
 - (void)loadChannels
 {
     [MMXChannel subscribedChannelsWithSuccess:^(NSArray<MMXChannel *> * _Nonnull channels) {
-        [_tableRefreshControl endRefreshing];
         _channels = channels;
-        _presentingChannels = _channels.mutableCopy;
-        [_channelsTable reloadData];
-        
+
+        if (channels.count) {
+            [MMXChannel channelDetails:channels numberOfMessages:5 numberOfSubcribers:1000 success:^(NSArray<MMXChannelDetailResponse *> * _Nonnull detailsForChannels) {
+
+                if (detailsForChannels) {
+                    _channelDetails = [detailsForChannels sortedArrayUsingComparator:^NSComparisonResult(MMXChannelDetailResponse  *obj1, MMXChannelDetailResponse  *obj2) {
+                        NSString *date1 = obj1.lastPublishedTime;
+                        NSString *date2 = obj2.lastPublishedTime;
+                        return [date2 compare:date1 options:NSNumericSearch];
+                    }].mutableCopy;
+                }
+
+                [_tableRefreshControl endRefreshing];
+                [_channelsTable reloadData];
+            } failure:^(NSError * _Nonnull error) {
+                [_tableRefreshControl endRefreshing];
+                NSLog(@"some error due loading channels details \n%@",error);
+            }];
+        } else {
+            [_tableRefreshControl endRefreshing];
+            [_channelsTable reloadData];
+        }
     } failure:^(NSError * _Nonnull error) {
         [_tableRefreshControl endRefreshing];
         NSLog(@"some error due loading default channels \n%@",error);
     }];
 }
 
-- (void)loadChannelDetails
-{
-    
-}
-
 #pragma mark UITableViewDelegate, UITableViewDataSource
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return kCHKChannelCellHeight;
+}
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -212,14 +226,14 @@
     if (!cell) {
         cell = [[CHKChannelCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
-    cell.channel = _presentingChannels[indexPath.row];
+    cell.channelDetail = _channelDetails[indexPath.row];
     
     return cell;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return _presentingChannels.count;
+    return _channelDetails.count;
 }
 
 - (NSArray<UITableViewRowAction *> *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -234,8 +248,8 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (_presentingChannels.count) {
-        MMXChannel *channel = _presentingChannels[indexPath.row];
+    if (_channelDetails.count) {
+        MMXChannel *channel = [_channelDetails[indexPath.row] channel];
         [self shouldOpenChatChannel:channel];
     }
     

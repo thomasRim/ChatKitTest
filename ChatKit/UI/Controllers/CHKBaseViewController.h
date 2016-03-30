@@ -8,8 +8,14 @@
 
 #import <UIKit/UIKit.h>
 
+#import "CHKMessageType.h"
+
+@import MagnetMax;
+
 @interface CHKBaseViewController : UIViewController
 
 - (void)setupUI;
+
+@property (nonatomic, strong) id<MMEnumAttributeContainer> messageTypeContainer; //CHKMessageType by default
 
 @end

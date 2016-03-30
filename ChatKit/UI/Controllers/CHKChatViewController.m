@@ -8,7 +8,9 @@
 
 #import "CHKChatViewController.h"
 
-@interface CHKChatViewController ()<UIWebViewDelegate>
+#import "CHKChatMessageCell.h"
+
+@interface CHKChatViewController ()<UIWebViewDelegate, CHKChatMessageDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *chatTable;
 
@@ -49,7 +51,6 @@
         self.titleString = _chatChannel.summary;
     }
 
-    _messageTypeContainer = [[CHKMessageTypeContainer class] new];
     
     _sendBtn.enabled = NO;
     self.showAttachIcon = NO;
@@ -163,29 +164,30 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     CGFloat height = 44;
-    
+
     MMXMessage *msg = _presentingMessages[indexPath.row];
-    height = [self messageBubbleContentHeightForMessage:msg] + 20;
-    
+
+    height = [CHKChatMessageCell cellHeightForBubbleContentView:[self textCellContentForMessage:msg]];
+
     return height;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSString *identifier = @"messageCell";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
+    NSString *identifier = NSStringFromClass([CHKChatMessageCell class]);
+
+    CHKChatMessageCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
+
     if (!cell) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
-        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        cell = [[CHKChatMessageCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
+        cell.showSenderAvatar = YES;
+        cell.showSenderName = YES;
+        cell.delegate = self;
     }
-    [cell.contentView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
-
     MMXMessage *msg = _presentingMessages[indexPath.row];
-    NSLog(@"msg cont for index %@ %@",@(indexPath.row),msg.messageContent);
 
-    UIView *newSub = [self contentCellViewForMessage:_presentingMessages[indexPath.row]];
-
-    [cell.contentView addSubview:newSub];
+    cell.message = msg;
+    cell.bubbleContentView = [self contentCellViewForMessage:_presentingMessages[indexPath.row]];
     
     return cell;
 }
@@ -245,36 +247,6 @@
         }
     }
     return resultView;
-}
-
-- (CGFloat)messageBubbleContentHeightForMessage:(MMXMessage *)message
-{
-    CGFloat height = 24;
-    if (message) {
-
-        CHKMessageType type = [self messageTypeForMessage:message];
-
-        switch (type) {
-
-            case CHKMessageType_Text: {
-                height = [self textCellContentForMessage:message].frame.size.height;
-                break;
-            }
-            case CHKMessageType_Photo: {
-                height = [self imageCellContentForMessage:message].frame.size.height;
-                break;
-            }
-            case CHKMessageType_WebTemplate: {
-                height = 200;
-                break;
-            }
-            default : {
-                height = [self textCellContentForMessage:message].frame.size.height;
-                
-            }
-        }
-    }
-    return height;
 }
 
 - (UIView*)contentCellViewForMessage:(MMXMessage*)message
@@ -407,7 +379,7 @@
     NSString *messageTypeKey = @"";
     _outMessageType = CHKMessageType_Text;
 
-    NSDictionary *typesMapp = [[_messageTypeContainer class] mappings];
+    NSDictionary *typesMapp = [[self.messageTypeContainer class] mappings];
 
     for (NSString *key in typesMapp.allKeys) {
         CHKMessageType type = [typesMapp[key] integerValue];
@@ -435,7 +407,7 @@
     CHKMessageType type = CHKMessageType_Text;
 
     NSDictionary *content = message.messageContent;
-    NSDictionary *typesMapp = [[_messageTypeContainer class] mappings];
+    NSDictionary *typesMapp = [[self.messageTypeContainer class] mappings];
 
     type = [typesMapp[content[@"type"]] integerValue];
 
@@ -495,6 +467,15 @@
     }
     return YES;
 }
+
+#pragma mark - CHKChatMessageDelegate
+
+- (void)chatMessageCell:(CHKChatMessageCell *)cell updatedHeight:(CGFloat)height
+{
+    [_chatTable beginUpdates];
+    [_chatTable endUpdates];
+}
+
 
 
 

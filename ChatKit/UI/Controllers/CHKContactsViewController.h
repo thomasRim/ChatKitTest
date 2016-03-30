@@ -8,8 +8,6 @@
 
 #import "CHKBaseViewController.h"
 
-@import MagnetMax;
-
 @interface CHKContactsViewController : CHKBaseViewController <UITableViewDelegate, UITableViewDataSource>
 
 /**

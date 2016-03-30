@@ -20,4 +20,7 @@
 @property (nonatomic, weak) id<CHKAvatarViewDelegate> delegate;
 @property (nonatomic, strong) MMUser *user;
 
+@property (nonatomic, strong) UIColor *defaultBackgroundColor; // 0x12aafa - default
+@property (nonatomic, strong) UIImage *defaultBackgroundImage; //nil - default
+
 @end

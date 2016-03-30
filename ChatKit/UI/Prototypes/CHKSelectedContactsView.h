@@ -17,9 +17,11 @@
 
 @interface CHKSelectedContactsView : UIView
 
-@property (nonatomic, weak) id<CHKSelectedContactsViewDelegate> delegate;
+@property (nonatomic, weak) id<CHKSelectedContactsViewDelegate> delegate; // for interaction on tapToRemove action
 
 - (void)addContact:(MMUser*)contact;
 - (void)removeContact:(MMUser*)contact;
+
 - (NSArray*)selectedContacts;
+
 @end

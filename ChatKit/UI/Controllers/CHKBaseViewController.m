@@ -33,6 +33,9 @@
 {
     [super viewWillAppear:animated];
     [[[self class] nib] instantiateWithOwner:self options:nil];
+
+    _messageTypeContainer = [[CHKMessageTypeContainer class] new];
+
     [self setupUI];
 }
 

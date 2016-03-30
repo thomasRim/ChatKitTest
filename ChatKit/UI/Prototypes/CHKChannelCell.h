@@ -8,6 +8,7 @@
 
 @import MagnetMax;
 
+#define kCHKChannelCellHeight 60
 
 @interface CHKChannelCell : UITableViewCell
 
@@ -15,5 +16,6 @@
  *  Using custom inherited class, you should override setter for this property.
  */
 @property (nonatomic, strong) MMXChannel *channel;
+@property (nonatomic, strong) MMXChannelDetailResponse *channelDetail;
 
 @end

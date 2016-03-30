@@ -8,11 +8,13 @@
 
 #import "CHKChatMessageCell.h"
 
+#import "CHKAvatarView.h"
+
 @interface CHKChatMessageCell ()
 
 @property (nonatomic, strong) UILabel *messageDateL;
 @property (nonatomic, strong) UILabel *usernameL;
-@property (nonatomic, strong) UIImageView *avatarIV;
+@property (nonatomic, strong) CHKAvatarView *avatarV;
 @property (nonatomic, strong) UIView *bubbleV;
 
 @end
@@ -26,12 +28,9 @@
         _showSenderName = NO;
         _showMessageDate = NO;
         _showSenderAvatar = NO;
+        self.selectionStyle = UITableViewCellSelectionStyleNone;
     }
     return self;
-}
-
-- (void)awakeFromNib {
-    // Initialization code
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
@@ -42,6 +41,8 @@
 
 - (void)updateUI
 {
+    [self.contentView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+
     //
     BOOL selfMessage = [_message.sender.userID isEqualToString:[MMUser currentUser].userID];
 
@@ -73,32 +74,26 @@
 
             CGRect avatarRect = CGRectZero;
             if (selfMessage) {
-                avatarRect = CGRectMake(contentV.frame.size.width-30-5, contentV.frame.size.height-5-30, 30, 30);
+                avatarRect = CGRectMake(contentV.frame.size.width-_avatarDimencionsSize-5, contentV.frame.size.height-5-_avatarDimencionsSize, _avatarDimencionsSize, _avatarDimencionsSize);
             } else {
-                avatarRect = CGRectMake(5, contentV.frame.size.height-5-30, 30, 30);
+                avatarRect = CGRectMake(5, contentV.frame.size.height-5-_avatarDimencionsSize, _avatarDimencionsSize, _avatarDimencionsSize);
             }
 
-            UIView *avaV = [[UIView alloc] initWithFrame:avatarRect];
+            _avatarV = [[CHKAvatarView alloc] initWithFrame:avatarRect];
 
-            if (selfMessage) {
-                avaV.backgroundColor = [UIColor blueColor];
-            } else {
-                avaV.backgroundColor = [UIColor blueColor];
-            }
+            _avatarV.user = _message.sender;
 
-            avaV.layer.cornerRadius = avaV.frame.size.width/2;
-            avaV.layer.masksToBounds = YES;
-            [contentV addSubview:avaV];
+            [contentV addSubview:_avatarV];
         }
         //date
         if (_showMessageDate) {
-            UILabel *messageDate = [[UILabel alloc] initWithFrame:CGRectMake(0,
+            _messageDateL = [[UILabel alloc] initWithFrame:CGRectMake(0,
                                                                             0,
                                                                             self.frame.size.width,
                                                                             12)];
-            messageDate.text = [NSString stringWithFormat:@"%@",_message.timestamp];
-            messageDate.textAlignment = NSTextAlignmentCenter;
-            [contentV addSubview:messageDate];
+            _messageDateL.text = [NSString stringWithFormat:@"%@",_message.timestamp];
+            _messageDateL.textAlignment = NSTextAlignmentCenter;
+            [contentV addSubview:_messageDateL];
 
         }
         //username
@@ -137,6 +132,10 @@
 
     }
     [self.contentView addSubview:contentV];
+
+    if (self.delegate && [self.delegate respondsToSelector:@selector(chatMessageCell:updatedHeight:)]) {
+        [self.delegate chatMessageCell:self updatedHeight:contentV.frame.size.height];
+    }
 }
 
 - (void)setMessage:(MMXMessage *)message
@@ -183,10 +182,10 @@
     return width;
 }
 
-- (CGFloat)cellHeight
++ (CGFloat)cellHeightForBubbleContentView:(UIView*)view;
 {
     CGFloat height = 0;
-    
+    height = view.frame.size.height + 20;
     return height;
 }
 

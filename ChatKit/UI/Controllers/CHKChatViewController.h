@@ -7,9 +7,6 @@
 //
 
 #import "CHKBaseViewController.h"
-#import "CHKMessageType.h"
-
-@import MagnetMax;
 
 @protocol CHKChatViewControllerDelegate <NSObject>
 
@@ -32,6 +29,5 @@
 
 @property (nonatomic, assign) BOOL showAttachIcon; // NO - default
 
-@property (nonatomic, strong) id<MMEnumAttributeContainer> messageTypeContainer; //CHKMessageType by default
 
 @end

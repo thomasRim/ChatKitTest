@@ -25,7 +25,7 @@
     if (self = [super initWithFrame:frame]) {
         CGFloat minLength = MIN(frame.size.width, frame.size.height);
         _backgroundV = [[UIView alloc] initWithFrame:CGRectMake(0, 0, minLength, minLength)];
-        _backgroundV.backgroundColor = RGB_HEX(0x57a6fe);
+        _backgroundV.backgroundColor = RGB_HEX(0x12aafa);
         _backgroundV.layer.cornerRadius = minLength/2;
         _backgroundV.layer.masksToBounds = YES;
         [self addSubview:_backgroundV];
@@ -40,6 +40,7 @@
         _avatarIV = [[UIImageView alloc] initWithFrame:_backgroundV.bounds];
         _avatarIV.contentMode = UIViewContentModeScaleAspectFill;
         [_backgroundV addSubview:_avatarIV];
+        
     }
     return self;
 }
@@ -68,6 +69,20 @@
         _userAcrL.text = [NSString stringWithFormat:@"%@%@",fNl,lNl];
 
         [CHKUtils chk_loadImageByUrl:_user.avatarURL toImageView:_avatarIV animateLoading:NO];
+    }
+}
+
+- (void)setDefaultBackgroundColor:(UIColor *)defaultBackgroundColor
+{
+    if (defaultBackgroundColor) {
+        _backgroundV.backgroundColor = defaultBackgroundColor;
+    }
+}
+
+- (void)setDefaultBackgroundImage:(UIImage *)defaultBackgroundImage
+{
+    if (defaultBackgroundImage) {
+        _avatarIV.image = defaultBackgroundImage;
     }
 }
 

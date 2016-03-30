@@ -33,7 +33,7 @@
 
 @property (nonatomic, assign, readonly) CGFloat bubbleContentWidthMax;
 
-- (CGFloat)cellHeight;
++ (CGFloat)cellHeightForBubbleContentView:(UIView*)view;
 
 // UI customization
 
