@@ -503,13 +503,23 @@
             [self addUserToRegularGroup:user];
         }
     }
-    
+
+    NSArray *testGroups = [NSArray arrayWithArray:_grouppedContacts];
+    for (ContactsGroup *group in testGroups) {
+        if (group.contacts.count == 0) {
+            [_grouppedContacts removeObject:group];
+        }
+    }
+
     [_contactsTable reloadData];
 }
 
 - (void)addUserToRegularGroup:(MMUser*)user
 {
-    NSString *groupChar = [user.lastName substringWithRange:NSMakeRange(0, 1)].lowercaseString;
+    NSString *groupChar = @" ";
+    if (user.lastName.length) {
+        groupChar = [user.lastName substringWithRange:NSMakeRange(0, 1)].lowercaseString;
+    }
 
     BOOL groupForCharExist = NO;
     ContactsGroup *groupToAssignTo = nil;
