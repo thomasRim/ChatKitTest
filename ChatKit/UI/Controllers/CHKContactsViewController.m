@@ -65,11 +65,6 @@
     }
     _enableSearch = YES;
     _contactsPerPage = 0;
-
-#pragma mark !!!! hardcode remove
-
-    _enableGroupping = YES;
-    _tagGroups = @[@"accounting",@"facilities",@"hr"];
 }
 
 - (void)viewDidAppear:(BOOL)animated
