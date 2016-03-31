@@ -65,6 +65,9 @@
     }
     _enableSearch = YES;
     _contactsPerPage = 0;
+
+    _tagGroups = @[@"facility",@"accounting",@"marketing",@"hr"];
+    _enableGroupping = YES;
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -458,7 +461,7 @@
 {
     _grouppedContacts = @[].mutableCopy;
     //sort by lastName
-    NSArray *sortedUsers = [_plainListContacts sortedArrayUsingComparator:^NSComparisonResult(MMUser *user1,MMUser *user2) {
+    NSArray *sortedUsers = _plainListContacts;/*[_plainListContacts sortedArrayUsingComparator:^NSComparisonResult(MMUser *user1,MMUser *user2) {
         NSString *fullName1 = [NSString stringWithFormat:@"%@%@%@",
                               user1.firstName.length?user1.firstName:@"",
                               user1.lastName.length?@" ":@"",
@@ -469,6 +472,7 @@
                                user2.lastName.length?user2.lastName:@""];
         return [fullName1.lowercaseString compare:fullName2.lowercaseString options:NSNumericSearch|NSForcedOrderingSearch];
     }];
+                                               */
 
     //precreae groups if users with appropriate tags exist
     if (_tagGroups.count) {
@@ -493,6 +497,7 @@
                     if ([tag.lowercaseString isEqualToString:tagedGroup.name.lowercaseString]) {
                         userTagsUsable = YES;
                         [tagedGroup.contacts addObject:user];
+                        [self doSortInGroup:tagedGroup];
                     }
                 }
             }
@@ -539,6 +544,23 @@
         [groupToAssignTo.contacts addObject:user];
         [_grouppedContacts addObject:groupToAssignTo];
     }
+
+    [self doSortInGroup:groupToAssignTo];
+}
+
+- (void)doSortInGroup:(ContactsGroup*)group {
+    group.contacts = [group.contacts sortedArrayUsingComparator:^NSComparisonResult(MMUser *user1,MMUser *user2) {
+        NSString *fullName1 = [NSString stringWithFormat:@"%@%@%@",
+                               user1.firstName.length?user1.firstName:@"",
+                               user1.lastName.length?@" ":@"",
+                               user1.lastName.length?user1.lastName:@""];
+        NSString *fullName2 = [NSString stringWithFormat:@"%@%@%@",
+                               user2.firstName.length?user2.firstName:@"",
+                               user2.lastName.length?@" ":@"",
+                               user2.lastName.length?user2.lastName:@""];
+        return [fullName1.lowercaseString compare:fullName2.lowercaseString options:NSNumericSearch|NSForcedOrderingSearch];
+    }].mutableCopy;
+
 }
 
 @end
