@@ -14,8 +14,15 @@
 
 @interface CHKBaseViewController : UIViewController
 
+//non-overrides, just use
+- (void)startAnimateWait;
+- (void)stopAnimateWait;
+
+
+// base overriden methods
 - (void)setupUI;
 
 @property (nonatomic, strong) id<MMEnumAttributeContainer> messageTypeContainer; //CHKMessageType by default
+
 
 @end

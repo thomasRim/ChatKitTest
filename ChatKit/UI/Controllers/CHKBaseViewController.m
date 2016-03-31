@@ -8,10 +8,39 @@
 
 #import "CHKBaseViewController.h"
 
+@interface CHKBaseViewController ()
+
+@property (nonatomic, strong) UIActivityIndicatorView *chk_baseSpinner;
+
+@end
+
 @implementation CHKBaseViewController
 
 #pragma mark - Class Methods
 
+- (void)startAnimateWait
+{
+    if (!_chk_baseSpinner) {
+        _chk_baseSpinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+        _chk_baseSpinner.color = [UIColor darkGrayColor];
+        _chk_baseSpinner.hidesWhenStopped = YES;
+        [self.view addSubview:_chk_baseSpinner];
+        _chk_baseSpinner.center = self.view.center;
+        [_chk_baseSpinner startAnimating];
+    }
+}
+
+- (void)stopAnimateWait;
+{
+    if (_chk_baseSpinner) {
+        [_chk_baseSpinner stopAnimating];
+        [_chk_baseSpinner removeFromSuperview];
+        _chk_baseSpinner = nil;
+    }
+}
+
+
+//overrides
 + (UINib *)nib
 {
     NSLog(@"You need to override this method!");

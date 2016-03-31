@@ -16,6 +16,21 @@
 
 #define kCHKSelectedHeight 50
 
+@interface ContactsGroup : NSObject
+@property (nonatomic, copy) NSString *name;
+@property (nonatomic, strong) NSMutableArray *contacts;
+@end
+
+@implementation ContactsGroup
+- (instancetype)init{
+    if (self = [super init]) {
+        self.name = @"";
+        self.contacts = @[].mutableCopy;
+    } return self;
+}
+
+@end
+
 @interface CHKContactsViewController ()<UISearchBarDelegate, CHKSelectedContactsViewDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *contactsTable;
@@ -27,7 +42,8 @@
 @property (nonatomic, strong) CHKSelectedContactsView *selectedCV;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *topLC;
 
-@property (nonatomic, strong) NSMutableArray *presentingUsers;
+@property (nonatomic, strong) NSMutableArray *plainListContacts;
+@property (nonatomic, strong) NSMutableArray *grouppedContacts;
 
 @end
 
@@ -48,6 +64,12 @@
         self.navigationItem.title = [self titleString];
     }
     _enableSearch = YES;
+    _contactsPerPage = 0;
+
+#pragma mark !!!! hardcode remove
+
+    _enableGroupping = YES;
+    _tagGroups = @[@"accounting",@"facilities",@"hr"];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -55,7 +77,7 @@
     [super viewDidAppear:animated];
 
     if (_contacts) {
-        _presentingUsers = _contacts.mutableCopy;
+        _plainListContacts = _contacts.mutableCopy;
     } else {
         [self searchUsers:nil];
 
@@ -151,7 +173,47 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return _presentingUsers.count;
+    if (_enableGroupping) {
+        ContactsGroup *group = _grouppedContacts[section];
+        return group.contacts.count;
+    } else {
+        return _plainListContacts.count;
+    }
+}
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    if (_enableGroupping) {
+        return _grouppedContacts.count;
+    } else {
+        return 1;
+    }
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+    if (!_enableGroupping) {
+        return nil;
+    } else {
+        ContactsGroup *group = _grouppedContacts[section];
+
+        UIView *base = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 20)];
+        base.backgroundColor = RGB_HEX(0xacb5c0);
+        UILabel *groupLbl = [[UILabel alloc] initWithFrame:CGRectMake(16, 0, base.bounds.size.width, base.bounds.size.height)];
+        groupLbl.textColor = [UIColor whiteColor];
+        groupLbl.text = group.name.capitalizedString;
+        [base addSubview:groupLbl];
+        return base;
+    }
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    if (!_enableGroupping) {
+        return 0;
+    } else {
+        return 20;
+    }
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -164,7 +226,14 @@
         cell.selectedBackgroundColor = RGB_HEX(0xc9e0e5);
         cell.normalUsernameColor = [UIColor lightGrayColor];
     }
-    MMUser *user = _presentingUsers[indexPath.row];
+
+    MMUser *user = nil;
+    if (_enableGroupping) {
+        ContactsGroup *group = _grouppedContacts[indexPath.section];
+        user = group.contacts[indexPath.row];
+    } else {
+        user = _plainListContacts[indexPath.row];
+    };
     cell.user = user;
     
     return cell;
@@ -185,7 +254,15 @@
                 _topLC.constant = 0;
             }];
         } else {
-            [_selectedCV removeContact:_presentingUsers[indexPath.row]];
+            MMUser *contact = nil;
+
+            if (!_enableGroupping) {
+                contact = _plainListContacts[indexPath.row];
+            } else {
+                ContactsGroup *group = _grouppedContacts[indexPath.section];
+                contact = group.contacts[indexPath.row];
+            }
+            contact?[_selectedCV removeContact:contact]:nil;
         }
     }
 }
@@ -196,8 +273,17 @@
     _searchBar.showsCancelButton = NO;
 
     if (_createBBI) {
+        MMUser *contact = nil;
+
+        if (!_enableGroupping) {
+            contact = _plainListContacts[indexPath.row];
+        } else {
+            ContactsGroup *group = _grouppedContacts[indexPath.section];
+            contact = group.contacts[indexPath.row];
+        }
+
         if (_topLC.constant > 0) {
-            [_selectedCV addContact:_presentingUsers[indexPath.row]];
+            contact?[_selectedCV addContact:contact]:nil;
         } else {
             _selectedCV = [[CHKSelectedContactsView alloc] initWithFrame:CGRectMake(0, 64, self.view.frame.size.width, kCHKSelectedHeight)];
             _selectedCV.delegate = self;
@@ -206,7 +292,7 @@
                 _topLC.constant = kCHKSelectedHeight;
             } completion:^(BOOL finished) {
                 [self.view addSubview:_selectedCV];
-                [_selectedCV addContact:_presentingUsers[indexPath.row]];
+                contact?[_selectedCV addContact:contact]:nil;
             }];
         }
 
@@ -218,27 +304,59 @@
 
 - (void)removedContactByTap:(MMUser *)contact
 {
-    for (MMUser *user in _presentingUsers) {
-        if ([user.userID isEqualToString:contact.userID]) {
-            NSInteger index = [_presentingUsers indexOfObject:user];
-            [_contactsTable deselectRowAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0] animated:YES];
-            [self tableView:_contactsTable didDeselectRowAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0]];
-            break;
+    if (!_enableGroupping) {
+        for (MMUser *user in _plainListContacts) {
+            if ([user.userID isEqualToString:contact.userID]) {
+                NSInteger index = [_plainListContacts indexOfObject:user];
+                [_contactsTable deselectRowAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0] animated:YES];
+                [self tableView:_contactsTable didDeselectRowAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0]];
+                break;
+            }
+        }
+    } else {
+        for (ContactsGroup *group in _grouppedContacts) {
+            for (MMUser *user in group.contacts) {
+                if ([user.userID isEqualToString:contact.userID]) {
+                    NSInteger section = [_grouppedContacts indexOfObject:group];
+                    NSInteger row = [group.contacts indexOfObject:user];
+
+                    [_contactsTable deselectRowAtIndexPath:[NSIndexPath indexPathForRow:row inSection:section] animated:YES];
+                    [self tableView:_contactsTable didDeselectRowAtIndexPath:[NSIndexPath indexPathForRow:row inSection:section]];
+                    break;
+                }
+            }
         }
     }
+
     
 }
 
 - (void)checkSelectedContacts
 {
     NSArray *selectedContacts = _selectedCV.selectedContacts;
-    for (MMUser *userPresent in _presentingUsers) {
-        for (MMUser *userSelect in selectedContacts) {
-            if ([userSelect.userID isEqualToString:userPresent.userID]) {
-                NSInteger indexPresent = [_presentingUsers indexOfObject:userPresent];
-                [_contactsTable selectRowAtIndexPath:[NSIndexPath indexPathForRow:indexPresent inSection:0] animated:NO scrollPosition:UITableViewScrollPositionNone];
+
+    if (!_enableGroupping) {
+        for (MMUser *userPresent in _plainListContacts) {
+            for (MMUser *userSelect in selectedContacts) {
+                if ([userSelect.userID isEqualToString:userPresent.userID]) {
+                    NSInteger indexPresent = [_plainListContacts indexOfObject:userPresent];
+                    [_contactsTable selectRowAtIndexPath:[NSIndexPath indexPathForRow:indexPresent inSection:0] animated:NO scrollPosition:UITableViewScrollPositionNone];
+                }
             }
         }
+    } else {
+        for (ContactsGroup *group in _grouppedContacts) {
+            for (MMUser *user in group.contacts) {
+                for (MMUser *userSelected in selectedContacts) {
+                    if ([user.userID isEqualToString:userSelected.userID]) {
+                        NSInteger section = [_grouppedContacts indexOfObject:group];
+                        NSInteger row = [group.contacts indexOfObject:user];
+                        [_contactsTable selectRowAtIndexPath:[NSIndexPath indexPathForRow:row inSection:section] animated:NO scrollPosition:UITableViewScrollPositionNone];
+                    }
+                }
+            }
+        }
+
     }
 }
 
@@ -249,10 +367,18 @@
     NSArray *indexPaths = [_contactsTable indexPathsForSelectedRows];
     
     NSMutableArray *selectedUsers = @[].mutableCopy;
-    for (NSIndexPath *path in indexPaths) {
-        [selectedUsers addObject:_presentingUsers[path.row]];
+
+    if (!_enableGroupping) {
+        for (NSIndexPath *path in indexPaths) {
+            [selectedUsers addObject:_plainListContacts[path.row]];
+        }
+    } else {
+        for (NSIndexPath *path in indexPaths) {
+            ContactsGroup *group = _grouppedContacts[path.section];
+            [selectedUsers addObject:group.contacts[path.row]];
+        }
     }
-    
+
     [self shouldCreateChatWithSelectedUsers:selectedUsers];
 }
 
@@ -277,28 +403,7 @@
 
 #pragma mark - UISearchBarDelegate
 
-- (void)searchUsers:(NSString*)searchString
-{
 
-    NSString *searchPredStr = searchString;
-    if (!searchString.length || [searchString isEqualToString:@""] || !searchString) {
-        searchPredStr = @"firstName:*";
-    } else {
-        searchPredStr = [NSString stringWithFormat:@"userName:*%@* OR firstName:*%@* OR lastName:*%@",searchString,searchString,searchString];
-    }
-
-    [MMUser searchUsers:searchPredStr limit:1000 offset:0 sort:@"firstName:asc" success:^(NSArray<MMUser *> * _Nonnull users) {
-        _contacts = users;
-        NSLog(@"contacts %@",@(users.count));
-        _presentingUsers = _contacts.mutableCopy;
-        [_contactsTable reloadData];
-
-        [self checkSelectedContacts];
-
-    } failure:^(NSError * _Nonnull error) {
-        NSLog(@"search users err %@",error);
-    }];
-}
 
 - (BOOL)searchBarShouldBeginEditing:(UISearchBar *)searchBar
 {
@@ -318,6 +423,117 @@
 {
     [searchBar resignFirstResponder];
     [self searchUsers:searchBar.text];
+}
+
+#pragma mark - Search and Filter
+
+- (void)searchUsers:(NSString*)searchString
+{
+    [self startAnimateWait];
+
+    NSString *searchPredStr = searchString;
+    if (!searchString.length || [searchString isEqualToString:@""] || !searchString) {
+        searchPredStr = @"firstName:*";
+    } else {
+        searchPredStr = [NSString stringWithFormat:@"userName:*%@* OR firstName:*%@* OR lastName:*%@",searchString,searchString,searchString];
+    }
+
+    [MMUser searchUsers:searchPredStr limit:1000 offset:0 sort:@"lastName:asc" success:^(NSArray<MMUser *> * _Nonnull users) {
+        [self stopAnimateWait];
+        _contacts = users;
+        NSLog(@"contacts %@",@(users.count));
+
+        _plainListContacts = _contacts.mutableCopy;
+
+        if (!_enableGroupping) {
+            [_contactsTable reloadData];
+        } else {
+            [self groupAndPresentContacts];
+        }
+
+        [self checkSelectedContacts];
+
+    } failure:^(NSError * _Nonnull error) {
+        [self stopAnimateWait];
+        NSLog(@"search users err %@",error);
+    }];
+}
+
+- (void)groupAndPresentContacts
+{
+    _grouppedContacts = @[].mutableCopy;
+    //sort by lastName
+    NSArray *sortedUsers = [_plainListContacts sortedArrayUsingComparator:^NSComparisonResult(MMUser *user1,MMUser *user2) {
+        NSString *fullName1 = [NSString stringWithFormat:@"%@%@%@",
+                              user1.firstName.length?user1.firstName:@"",
+                              user1.lastName.length?@" ":@"",
+                              user1.lastName.length?user1.lastName:@""];
+        NSString *fullName2 = [NSString stringWithFormat:@"%@%@%@",
+                               user2.firstName.length?user2.firstName:@"",
+                               user2.lastName.length?@" ":@"",
+                               user2.lastName.length?user2.lastName:@""];
+        return [fullName1.lowercaseString compare:fullName2.lowercaseString options:NSNumericSearch|NSForcedOrderingSearch];
+    }];
+
+    //precreae groups if users with appropriate tags exist
+    if (_tagGroups.count) {
+        for (NSString *tagName in _tagGroups) {
+            ContactsGroup *group = [ContactsGroup new];
+            group.name = tagName.lowercaseString;
+            [_grouppedContacts addObject:group];
+        }
+    }
+
+    // fill
+    for (MMUser *user in sortedUsers) {
+        if ([user.userID isEqualToString:[MMUser currentUser].userID]) { //exclude self
+            continue;
+        }
+
+        if (user.tags.count) { // send user to any tag groups due to contact's tags
+            BOOL userTagsUsable = NO;
+
+            for (ContactsGroup *tagedGroup in _grouppedContacts) {
+                for (NSString *tag in user.tags) {
+                    if ([tag.lowercaseString isEqualToString:tagedGroup.name.lowercaseString]) {
+                        userTagsUsable = YES;
+                        [tagedGroup.contacts addObject:user];
+                    }
+                }
+            }
+            if (!userTagsUsable) {
+                [self addUserToRegularGroup:user];
+            }
+        } else { // other non-tagged users
+            [self addUserToRegularGroup:user];
+        }
+    }
+    
+    [_contactsTable reloadData];
+}
+
+- (void)addUserToRegularGroup:(MMUser*)user
+{
+    NSString *groupChar = [user.lastName substringWithRange:NSMakeRange(0, 1)].lowercaseString;
+
+    BOOL groupForCharExist = NO;
+    ContactsGroup *groupToAssignTo = nil;
+
+    for (ContactsGroup *group in _grouppedContacts) {
+        if ([group.name.lowercaseString isEqualToString:groupChar.lowercaseString]) {
+            groupForCharExist = YES;
+            groupToAssignTo = group;
+            break;
+        }
+    }
+    if (groupForCharExist) {
+        [groupToAssignTo.contacts addObject:user];
+    } else {
+        groupToAssignTo = [ContactsGroup new];
+        groupToAssignTo.name = groupChar.lowercaseString;
+        [groupToAssignTo.contacts addObject:user];
+        [_grouppedContacts addObject:groupToAssignTo];
+    }
 }
 
 @end

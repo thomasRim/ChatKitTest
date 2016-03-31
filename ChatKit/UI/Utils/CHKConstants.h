@@ -13,7 +13,7 @@
 [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 \
 green:((float)((rgbValue & 0x00FF00) >>  8))/255.0 \
 blue:((float)((rgbValue & 0x0000FF) >>  0))/255.0 \
-alpha:1.0] //hex color is like 0xffffff
+alpha:1.0] // @rgbValue is a hex color, is like 0xffffff
 
 #define RGB(r,g,b) [UIColor colorWithRed:r/255. green:g/255. blue:b/255. alpha:1.]
 
