@@ -152,16 +152,7 @@
             _channelSummaryL.text = profile.displayName;
         }
 
-        MMXMessage *lastMsg = nil;
-        for (MMXMessage *msg in _channelDetail.messages) {
-            if (lastMsg) {
-                if (lastMsg.timestamp.timeIntervalSince1970 < msg.timestamp.timeIntervalSince1970) {
-                    lastMsg = msg;
-                }
-            } else {
-                lastMsg = msg;
-            }
-        }
+        MMXMessage *lastMsg = _channelDetail.messages.lastObject;
 
         _lastMessageTimeL.text = [self lastMessageDate:_channelDetail.lastPublishedTime];
 

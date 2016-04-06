@@ -29,6 +29,8 @@
 @property (nonatomic, strong) MMAttachment *outMessageAttachment;
 @property (nonatomic, assign) CHKMessageType outMessageType;
 
+@property (nonatomic, strong) NSMutableArray *chatCells;
+
 @end
 
 @implementation CHKChatViewController
@@ -65,10 +67,47 @@
     
     [_chatChannel messagesBetweenStartDate:endDate endDate:[NSDate date] limit:1000 offset:0 ascending:YES success:^(int totalCount, NSArray<MMXMessage *> * _Nonnull messages) {
         _presentingMessages = messages.mutableCopy;
-        [_chatTable reloadData];
+        [self generateCells];
     } failure:^(NSError * _Nonnull error) {
         
     }];
+}
+
+- (void)generateCells
+{
+    _chatCells = @[].mutableCopy;
+
+    for (MMXMessage *msg in _presentingMessages) {
+        NSInteger index = [_presentingMessages indexOfObject:msg];
+
+        CHKChatMessageCell *cell = [self cellForMessage:msg];
+        if (index == 0) {
+            cell.showSenderName = YES;
+            cell.showMessageDate = YES;
+        } else  if (_presentingMessages.count > 1){
+
+            MMXMessage *prevMessage = _presentingMessages[index-1];
+            if (![msg.sender.userID isEqualToString:prevMessage.sender.userID]) {
+                cell.showSenderName = YES;
+            }
+
+            NSTimeInterval interval = msg.timestamp.timeIntervalSince1970-prevMessage.timestamp.timeIntervalSince1970;
+            if (interval > 60*60) {
+                cell.showMessageDate = YES;
+            } else if (interval > 5*60) {
+                cell.showMessageDate = YES;
+                cell.messageDateFormat = @"hh:mm a";
+            }
+        }
+
+        cell.showSenderAvatar = YES;
+        cell.delegate = self;
+
+        cell.bubbleContentView = [self contentCellViewForMessage:msg forCell:cell];
+
+        [_chatCells addObject:cell];
+    }
+    [_chatTable reloadData];
 }
 
 - (NSArray *)leftBarButtonItems
@@ -158,37 +197,24 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return _presentingMessages.count;
+    return _chatCells.count;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    CGFloat height = 44;
+    CGFloat height = 60;
 
-    MMXMessage *msg = _presentingMessages[indexPath.row];
+    CHKChatMessageCell *cell = _chatCells[indexPath.row];
 
-    height = [CHKChatMessageCell cellHeightForBubbleContentView:[self textCellContentForMessage:msg]];
+    height = [cell cellHeight];
 
     return height;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSString *identifier = NSStringFromClass([CHKChatMessageCell class]);
-
-    CHKChatMessageCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
-
-    if (!cell) {
-        cell = [[CHKChatMessageCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
-        cell.showSenderAvatar = YES;
-        cell.showSenderName = YES;
-        cell.delegate = self;
-    }
-    MMXMessage *msg = _presentingMessages[indexPath.row];
-
-    cell.message = msg;
-    cell.bubbleContentView = [self contentCellViewForMessage:_presentingMessages[indexPath.row]];
-    
+    CHKChatMessageCell *cell = [tableView dequeueReusableCellWithIdentifier:NSStringFromClass([CHKChatMessageCell class])];
+    cell = _chatCells[indexPath.row];
     return cell;
 }
 
@@ -206,7 +232,10 @@
                 }
                 
                 [_chatTable beginUpdates];
+                
                 [_presentingMessages addObject:message];
+                [self generateCells];
+
                 [_chatTable insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:_presentingMessages.count-1 inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
                 [_chatTable endUpdates];
                 
@@ -230,82 +259,37 @@
 
         switch (type) {
             case CHKMessageType_Text: {
-                resultView = [self textCellContentForMessage:message];
+                resultView = [self textCellContentForMessage:message width:bubbleWidth];
                 break;
             }
             case CHKMessageType_Photo: {
-                resultView = [self imageCellContentForMessage:message];
+                resultView = [self imageCellContentForMessage:message width:bubbleWidth];
                 break;
             }
             case CHKMessageType_WebTemplate: {
-                resultView = [self webCellContentForMessage:message];
+                resultView = [self webCellContentForMessage:message width:bubbleWidth];
                 break;
             }
             default: {
-                resultView = [self textCellContentForMessage:message];
+                resultView = [self textCellContentForMessage:message width:bubbleWidth];
             }
         }
     }
     return resultView;
 }
 
-- (UIView*)contentCellViewForMessage:(MMXMessage*)message
+- (UIView*)contentCellViewForMessage:(MMXMessage*)message forCell:(CHKChatMessageCell*)cell
 {
-    BOOL selfMessage = [message.sender.userID isEqualToString:[MMUser currentUser].userID];
-
     UIView *bubbleContent = nil;
-    UIView * contentV = nil;
-    
+
     if (message) {
         // bubble content
-        bubbleContent = [self messageBubbleContentViewForMessage:message maxBubbleWidth:self.view.frame.size.width-2*45];        
-        
-        contentV = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width,
-                                                            bubbleContent.frame.size.height + 20)];
-        
-        //avatar
-        CGRect avatarRect = CGRectZero;
-        if (selfMessage) {
-            avatarRect = CGRectMake(contentV.frame.size.width-30-5, contentV.frame.size.height-5-30, 30, 30);
-        } else {
-            avatarRect = CGRectMake(5, contentV.frame.size.height-5-30, 30, 30);
+        bubbleContent = [self messageBubbleContentViewForMessage:message maxBubbleWidth:[cell bubbleContentWidthMaxForTableWidth:_chatTable.bounds.size.width]];
         }
-        
-        UIView *avaV = [[UIView alloc] initWithFrame:avatarRect];
-        
-        if (selfMessage) {
-            avaV.backgroundColor = [UIColor blueColor];
-        } else {
-            avaV.backgroundColor = [UIColor blueColor];
-        }
-        
-        avaV.layer.cornerRadius = avaV.frame.size.width/2;
-        avaV.layer.masksToBounds = YES;
-        [contentV addSubview:avaV];
-        
-        //bubble
-        UIView *buble = [[UIView alloc] initWithFrame:CGRectMake(40,
-                                                                 5,
-                                                                 self.view.frame.size.width-2*40,
-                                                                 bubbleContent.frame.size.height+10)];
-        if (selfMessage) {
-            buble.backgroundColor = [UIColor lightGrayColor];
-        } else {
-            buble.backgroundColor = [UIColor lightGrayColor];
-        }
-        
-        buble.layer.cornerRadius = 10;
-        buble.layer.masksToBounds = YES;
-        [contentV addSubview:buble];
-        
-        [buble addSubview:bubbleContent];
-        bubbleContent.frame = CGRectMake(5, 5, bubbleContent.frame.size.width, bubbleContent.frame.size.height);
-
-    }
-    return contentV;
+    return bubbleContent;
 }
 
-- (UIView*)webCellContentForMessage:(MMXMessage*)message
+- (UIView*)webCellContentForMessage:(MMXMessage*)message width:(CGFloat)width
 {
 
     NSDictionary *content = message.messageContent;
@@ -314,7 +298,7 @@
     NSString *urlStr = content[@"message"];
     UIWebView *webV = [[UIWebView alloc] initWithFrame:CGRectMake(0,
                                                                   0,
-                                                                  self.view.frame.size.width-2*45,
+                                                                  width,
                                                                   195)];
     webV.scalesPageToFit = YES;
     webV.scrollView.scrollEnabled = NO;
@@ -331,13 +315,13 @@
     return webV;
 }
 
-- (UIView*)textCellContentForMessage:(MMXMessage*)message
+- (UIView*)textCellContentForMessage:(MMXMessage*)message width:(CGFloat)width
 {
     NSDictionary *content = message.messageContent;
 
     UILabel *lbl = [[UILabel alloc] initWithFrame:CGRectMake(0,
                                                              0,
-                                                             self.view.frame.size.width-2*45,
+                                                             width,
                                                              0)];
     lbl.text = [content[@"message"] length]?content[@"message"]:@" ";
     lbl.numberOfLines = 0;
@@ -347,11 +331,11 @@
     return lbl;
 }
 
-- (UIView*)imageCellContentForMessage:(MMXMessage*)message
+- (UIView*)imageCellContentForMessage:(MMXMessage*)message width:(CGFloat)width
 {
     UIImageView *iv = [[UIImageView alloc]  initWithFrame:CGRectMake(0,
                                                                      0,
-                                                                     self.view.frame.size.width-2*45,
+                                                                     width,
                                                                      100)];
     iv.contentMode = UIViewContentModeScaleAspectFit;
     if (message.attachments.count) {
@@ -414,6 +398,12 @@
     return type;
 }
 
+- (CHKChatMessageCell*)cellForMessage:(MMXMessage*)message
+{
+    CHKChatMessageCell *cell = [[CHKChatMessageCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:NSStringFromClass([CHKChatMessageCell class])];
+    cell.message = message;
+    return cell;
+}
 
 #pragma mark - Keyboard
 
@@ -472,8 +462,9 @@
 
 - (void)chatMessageCell:(CHKChatMessageCell *)cell updatedHeight:(CGFloat)height
 {
-    [_chatTable beginUpdates];
-    [_chatTable endUpdates];
+    NSLog(@"cell %@, height %@",cell,@(height));
+//    [_chatTable beginUpdates];
+//    [_chatTable endUpdates];
 }
 
 

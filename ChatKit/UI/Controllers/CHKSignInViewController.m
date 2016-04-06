@@ -93,12 +93,14 @@
     [MMUser resumeSession:^{
         [_spinner stopAnimating];
         if (completition) {
-            completition(YES);
+            completition?completition(YES):nil;
         } else {
             [self presentDefaultChats];
         }
     } failure:^(NSError * _Nonnull error) {
         [_spinner stopAnimating];
+        [MMUser logout];
+        NSLog(@"resume error %@",error);
         completition?completition(NO):nil;
     }];
 }
@@ -116,7 +118,7 @@
         [self presentDefaultChats];
     } failure:^(NSError * _Nonnull error) {
         [_spinner stopAnimating];
-
+        NSLog(@"login error %@",error);
     }];
 }
 

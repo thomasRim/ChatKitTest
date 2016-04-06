@@ -25,20 +25,22 @@
 // Content and cell size
 @property (nonatomic, strong) MMXMessage *message;
 @property (nonatomic, strong) UIView *bubbleContentView; // nil - default
+
 @property (nonatomic, assign) BOOL showSenderName; // NO - default
 @property (nonatomic, assign) BOOL showSenderAvatar; // NO - default
 @property (nonatomic, assign) BOOL showMessageDate; // NO- default
+@property (nonatomic, copy) NSString *messageDateFormat; // EEEE,MM-dd-yyy, hh:mm a - default
 
 @property (nonatomic, assign) CGFloat avatarDimencionsSize; // 30(x30) by default
 
-@property (nonatomic, assign, readonly) CGFloat bubbleContentWidthMax;
+- (CGFloat)bubbleContentWidthMaxForTableWidth:(CGFloat)tableWidth;
 
-+ (CGFloat)cellHeightForBubbleContentView:(UIView*)view;
-
+- (CGFloat)cellHeight;
 // UI customization
 
 @property (nonatomic, strong) UIColor *avatarBackground;
-@property (nonatomic, strong) UIColor *bubbleBackground;
+@property (nonatomic, strong) UIColor *selfBubbleColor;
+@property (nonatomic, strong) UIColor *otherBubbleColor;
 
 
 @end
