@@ -435,7 +435,16 @@
 
     [MMUser searchUsers:searchPredStr limit:1000 offset:0 sort:@"lastName:asc" success:^(NSArray<MMUser *> * _Nonnull users) {
         [self stopAnimateWait];
-        _contacts = users;
+
+        NSMutableArray *tamen = @[].mutableCopy;
+        for (MMUser *user in users) {
+            if (![user.userID isEqualToString:[MMUser currentUser].userID]) {
+                [tamen addObject:user];
+            }
+        }
+
+
+        _contacts = tamen;
         NSLog(@"contacts %@",@(users.count));
 
         _plainListContacts = _contacts.mutableCopy;
