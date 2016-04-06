@@ -245,7 +245,7 @@
     }
     MMXMessage *msg = notification.userInfo[MMXMessageKey];
 
-    NSLog(@"chat %@ /ngot message %@/nfrom %@ %@",msg.channel.name,msg.messageContent,msg.sender.firstName,msg.sender.lastName);
+    NSLog(@"chat %@ \ngot message %@\nfrom %@ %@",msg.channel.name,msg.messageContent,msg.sender.firstName,msg.sender.lastName);
 }
 
 #pragma mark - Content processing
@@ -299,7 +299,7 @@
     UIWebView *webV = [[UIWebView alloc] initWithFrame:CGRectMake(0,
                                                                   0,
                                                                   width,
-                                                                  195)];
+                                                                  190)];
     webV.scalesPageToFit = YES;
     webV.scrollView.scrollEnabled = NO;
     webV.delegate = self;

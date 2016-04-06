@@ -67,7 +67,7 @@
 - (CGFloat)cellHeight
 {
     CGFloat subsHeight = _dateHeightLC.constant + _usernameHeightLC.constant + _bubbleContentView.frame.size.height;
-    CGFloat height = 10 + MAX(_rightAvatarBaseV.frame.size.height, subsHeight);
+    CGFloat height = 15 + MAX(_rightAvatarBaseV.frame.size.height, subsHeight);
 
     return  height;
 }
@@ -137,7 +137,7 @@
         _bubbleV.layer.masksToBounds = YES;
 
 
-        _bubbleContentView.frame = CGRectMake(5, 2.5,
+        _bubbleContentView.frame = CGRectMake(5, 5,
                                               _bubbleContentView.frame.size.width,
                                               _bubbleContentView.frame.size.height);
 
@@ -195,7 +195,7 @@
 
 - (CGFloat)bubbleContentWidthMaxForTableWidth:(CGFloat)tableWidth
 {
-    CGFloat width = tableWidth-2*(20);
+    CGFloat width = tableWidth-2*(10);
 
     if (_showSenderAvatar) {
         width -= 2*(5 + _avatarDimencionsSize);
