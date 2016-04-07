@@ -215,6 +215,8 @@
 {
     CHKChatMessageCell *cell = [tableView dequeueReusableCellWithIdentifier:NSStringFromClass([CHKChatMessageCell class])];
     cell = _chatCells[indexPath.row];
+    cell.selfBubbleColor = _selfBubbleColor;
+    cell.otherBubbleColor = _otherBubbleColor;
     return cell;
 }
 
@@ -325,6 +327,7 @@
                                                              0)];
     lbl.text = [content[@"message"] length]?content[@"message"]:@" ";
     lbl.numberOfLines = 0;
+    lbl.textColor = [UIColor whiteColor];
     lbl.lineBreakMode = NSLineBreakByWordWrapping;
     [lbl sizeToFit];
     

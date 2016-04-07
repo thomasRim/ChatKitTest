@@ -29,5 +29,7 @@
 
 @property (nonatomic, assign) BOOL showAttachIcon; // NO - default
 
+@property (nonatomic, strong) UIColor *selfBubbleColor;
+@property (nonatomic, strong) UIColor *otherBubbleColor;
 
 @end
