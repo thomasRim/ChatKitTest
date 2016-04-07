@@ -67,12 +67,15 @@
 
 - (void)viewDidAppear:(BOOL)animated
 {
-    if (_channelDetails.count) {
-        [_channelsTable reloadData];
-    } else {
+    if (!_channels.count || !_channelDetails.count) {
+        [self startAnimateWait];
+    }
+//    if (_channelDetails.count) {
+//        [_channelsTable reloadData];
+//    } else {
         //loading default subscribed channels
         [self loadChannels];
-    }
+//    }
 }
 
 - (void)updateTableDataUI
@@ -175,27 +178,28 @@
 - (void)loadChannels
 {
     if (_channels.count) {
-        [self loadChannelDetails];
+        [self stopAnimateWait];
+        [self loadChannelDetailsForChannels:_channels];
     } else {
         [MMXChannel subscribedChannelsWithSuccess:^(NSArray<MMXChannel *> * _Nonnull channels) {
-            _channels = channels;
-
-            if (_channels.count) {
-                [self loadChannelDetails];
+            [self stopAnimateWait];
+            if (channels.count) {
+                [self loadChannelDetailsForChannels:channels];
             } else {
                 [_tableRefreshControl endRefreshing];
                 [_channelsTable reloadData];
             }
         } failure:^(NSError * _Nonnull error) {
+            [self stopAnimateWait];
             [_tableRefreshControl endRefreshing];
             NSLog(@"some error due loading default channels \n%@",error);
         }];
     }
 }
 
-- (void)loadChannelDetails
+- (void)loadChannelDetailsForChannels:(NSArray*)channelsToLoadDetails
 {
-    [MMXChannel channelDetails:_channels numberOfMessages:1 numberOfSubcribers:1000 success:^(NSArray<MMXChannelDetailResponse *> * _Nonnull detailsForChannels) {
+    [MMXChannel channelDetails:channelsToLoadDetails numberOfMessages:1 numberOfSubcribers:1000 success:^(NSArray<MMXChannelDetailResponse *> * _Nonnull detailsForChannels) {
 
         if (detailsForChannels) {
             _channelDetails = [detailsForChannels sortedArrayUsingComparator:^NSComparisonResult(MMXChannelDetailResponse  *obj1, MMXChannelDetailResponse  *obj2) {
