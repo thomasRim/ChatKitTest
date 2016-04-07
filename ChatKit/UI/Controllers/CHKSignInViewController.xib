@@ -7,6 +7,7 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="CHKSignInViewController">
             <connections>
+                <outlet property="backgroundIV" destination="Gib-c5-8eR" id="MpW-kf-OST"/>
                 <outlet property="checkboxIV" destination="nGm-UM-VTv" id="h4r-Dy-F48"/>
                 <outlet property="loginTF" destination="WS4-j6-UFN" id="axL-Yj-WyN"/>
                 <outlet property="logoHeightLC" destination="as0-ye-Teq" id="nPH-a0-3aE"/>
@@ -24,6 +25,9 @@
             <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <subviews>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Gib-c5-8eR">
+                    <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                </imageView>
                 <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="WS4-j6-UFN">
                     <rect key="frame" x="40" y="226" width="520" height="30"/>
                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -98,6 +102,7 @@
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
             <constraints>
+                <constraint firstItem="Gib-c5-8eR" firstAttribute="top" secondItem="QIh-x8-fYG" secondAttribute="top" id="0K1-KA-gcX"/>
                 <constraint firstItem="7e1-QL-LFW" firstAttribute="leading" secondItem="QIh-x8-fYG" secondAttribute="leading" constant="40" id="2uU-bS-NKr"/>
                 <constraint firstItem="7e1-QL-LFW" firstAttribute="top" secondItem="WS4-j6-UFN" secondAttribute="bottom" constant="8" id="4U6-f3-omm"/>
                 <constraint firstAttribute="trailing" secondItem="WS4-j6-UFN" secondAttribute="trailing" constant="40" id="7Fo-3Q-05j"/>
@@ -105,11 +110,14 @@
                 <constraint firstItem="Buc-eo-u7M" firstAttribute="top" secondItem="7e1-QL-LFW" secondAttribute="bottom" constant="8" id="IPI-TL-dox"/>
                 <constraint firstItem="hCi-dK-9u5" firstAttribute="top" secondItem="QIh-x8-fYG" secondAttribute="top" constant="120" id="Q62-rh-Pa6"/>
                 <constraint firstAttribute="trailing" secondItem="mn1-PM-htm" secondAttribute="trailing" constant="40" id="Sgt-qw-8Qb"/>
+                <constraint firstAttribute="bottom" secondItem="Gib-c5-8eR" secondAttribute="bottom" id="VGX-JR-mtM"/>
                 <constraint firstItem="Bf5-qz-5uH" firstAttribute="centerY" secondItem="QIh-x8-fYG" secondAttribute="centerY" id="a5z-ge-gIf"/>
                 <constraint firstAttribute="trailing" secondItem="7e1-QL-LFW" secondAttribute="trailing" constant="40" id="aEi-rv-GWV"/>
+                <constraint firstItem="Gib-c5-8eR" firstAttribute="leading" secondItem="QIh-x8-fYG" secondAttribute="leading" id="cdp-J5-uqt"/>
                 <constraint firstItem="mn1-PM-htm" firstAttribute="top" secondItem="Buc-eo-u7M" secondAttribute="bottom" constant="8" id="dfV-8v-GQU"/>
                 <constraint firstItem="Buc-eo-u7M" firstAttribute="centerX" secondItem="QIh-x8-fYG" secondAttribute="centerX" id="liR-la-HSH"/>
                 <constraint firstItem="hCi-dK-9u5" firstAttribute="centerX" secondItem="QIh-x8-fYG" secondAttribute="centerX" id="mU5-Tz-L94"/>
+                <constraint firstAttribute="trailing" secondItem="Gib-c5-8eR" secondAttribute="trailing" id="omj-Ud-P6k"/>
                 <constraint firstItem="WS4-j6-UFN" firstAttribute="leading" secondItem="QIh-x8-fYG" secondAttribute="leading" constant="40" id="pWS-xX-YrD"/>
                 <constraint firstItem="Bf5-qz-5uH" firstAttribute="centerX" secondItem="QIh-x8-fYG" secondAttribute="centerX" id="tuY-Zt-HIw"/>
                 <constraint firstItem="WS4-j6-UFN" firstAttribute="top" secondItem="hCi-dK-9u5" secondAttribute="bottom" constant="26" id="uWf-Pp-mRb"/>

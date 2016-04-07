@@ -8,9 +8,18 @@
 
 #import "CHKBaseViewController.h"
 
+@import MagnetMax;
+
+typedef enum {
+    CHKSessionStatus_NotLogged,
+    CHKSessionStatus_CanResume,
+    CHKSessionStatus_LoggedIn
+} CHKSessionStatus;
+
+
 @protocol CHKSignInViewController <NSObject>
 
-- (void)previousSavedSession:(BOOL)savedSessionExist;
+- (void)previousSavedSession:(CHKSessionStatus)savedSessionExist;
 
 @end
 
@@ -29,6 +38,7 @@
 
 @property (nonatomic, strong) UIImage *logoImage; // top logo image
 @property (nonatomic, assign) CGSize logoSize; // top logo image size
+@property (nonatomic, strong) UIImage *backgroundImage;
 
 @property (nonatomic, assign) NSInteger minimupPasswordLength; //default = 0;
 

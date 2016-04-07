@@ -15,6 +15,8 @@
 
 @property (weak, nonatomic) IBOutlet UIImageView *logoIV;
 
+@property (weak, nonatomic) IBOutlet UIImageView *backgroundIV;
+
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *logoToTopLC;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *logoWidthLC;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *logoHeightLC;
@@ -46,11 +48,11 @@
 
 
     if ([MMUser currentUser]) {
-        [self previousSavedSession:YES];
+        [self previousSavedSession:CHKSessionStatus_LoggedIn];
     } else if ([MMUser savedUser]) {
-        [self previousSavedSession:YES];
+        [self previousSavedSession:CHKSessionStatus_CanResume];
     } else {
-        [self previousSavedSession:NO];
+        [self previousSavedSession:CHKSessionStatus_NotLogged];
     }
 }
 
@@ -81,7 +83,13 @@
     _logoIV.image = _logoImage;
 }
 
-- (void)previousSavedSession:(BOOL)savedSessionExist
+- (void)setBackgroundImage:(UIImage *)backgroundImage
+{
+    _backgroundImage = backgroundImage;
+    _backgroundIV.image = _backgroundImage;
+}
+
+- (void)previousSavedSession:(CHKSessionStatus)savedSessionExist
 {
 }
 

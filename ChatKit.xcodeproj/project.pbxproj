@@ -34,6 +34,7 @@
 		7AA578351C9086B4005EB630 /* CHKContactsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7AA578341C9086B4005EB630 /* CHKContactsViewController.xib */; };
 		7AA578371C9086D8005EB630 /* CHKChannelsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7AA578361C9086D8005EB630 /* CHKChannelsViewController.xib */; };
 		7AA749EF1CA0A0710033833B /* CHKUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AA749EE1CA0A0710033833B /* CHKUtils.m */; };
+		7AC238411CB6C20600662C47 /* ChannelHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AC238401CB6C20600662C47 /* ChannelHelper.m */; };
 		7ADFB04B1C9CB9F00064AB50 /* CHKAssets.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 7ADFB04A1C9CB9F00064AB50 /* CHKAssets.bundle */; };
 /* End PBXBuildFile section */
 
@@ -84,6 +85,8 @@
 		7AA578361C9086D8005EB630 /* CHKChannelsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = CHKChannelsViewController.xib; path = UI/Controllers/CHKChannelsViewController.xib; sourceTree = "<group>"; };
 		7AA749ED1CA0A0710033833B /* CHKUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CHKUtils.h; path = UI/Utils/CHKUtils.h; sourceTree = "<group>"; };
 		7AA749EE1CA0A0710033833B /* CHKUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CHKUtils.m; path = UI/Utils/CHKUtils.m; sourceTree = "<group>"; };
+		7AC2383F1CB6C20600662C47 /* ChannelHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ChannelHelper.h; path = UI/ChannelHelper/ChannelHelper.h; sourceTree = "<group>"; };
+		7AC238401CB6C20600662C47 /* ChannelHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ChannelHelper.m; path = UI/ChannelHelper/ChannelHelper.m; sourceTree = "<group>"; };
 		7ADFB04A1C9CB9F00064AB50 /* CHKAssets.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = CHKAssets.bundle; path = UI/CHKAssets.bundle; sourceTree = "<group>"; };
 		F9ACF9791F7A3ADAF0E61DEE /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -189,6 +192,7 @@
 		7A3BD4151C8750CE00F072AC /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				7AC2383E1CB6C1F500662C47 /* ChannelHelper */,
 				7AA749EC1CA09FF30033833B /* Utils */,
 				7A1C6D3E1C988DB400FAB31E /* ViewControllers */,
 				7A73D2FC1C8DD34E0078EC47 /* Prototypes */,
@@ -264,6 +268,15 @@
 				7A19853F1CAB305A00DB8A72 /* CHKConstants.h */,
 			);
 			name = Utils;
+			sourceTree = "<group>";
+		};
+		7AC2383E1CB6C1F500662C47 /* ChannelHelper */ = {
+			isa = PBXGroup;
+			children = (
+				7AC2383F1CB6C20600662C47 /* ChannelHelper.h */,
+				7AC238401CB6C20600662C47 /* ChannelHelper.m */,
+			);
+			name = ChannelHelper;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -405,6 +418,7 @@
 				7AA578301C9078F9005EB630 /* AuthManager.m in Sources */,
 				7A48F0981CA058EE00BA9657 /* CHKChatMessageCell.m in Sources */,
 				7A1C6D451C98A11E00FAB31E /* CHKBaseViewController.m in Sources */,
+				7AC238411CB6C20600662C47 /* ChannelHelper.m in Sources */,
 				7AA749EF1CA0A0710033833B /* CHKUtils.m in Sources */,
 				7A73D3141C8DDA420078EC47 /* CHKChatViewController.m in Sources */,
 				7A8835CA1CA97AE40098428E /* CHKMessageType.m in Sources */,

@@ -24,5 +24,7 @@
 
 @property (nonatomic, strong) id<MMEnumAttributeContainer> messageTypeContainer; //CHKMessageType by default
 
+@property (nonatomic, strong) UIColor *backgroundColor;
+
 
 @end

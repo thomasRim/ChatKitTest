@@ -21,6 +21,9 @@
 @property (weak, nonatomic) IBOutlet UIView *leftAvatarBaseV;
 @property (weak, nonatomic) IBOutlet UIView *rightAvatarBaseV;
 @property (weak, nonatomic) IBOutlet UIView *bubbleV;
+@property (weak, nonatomic) IBOutlet UIImageView *bubbleIV;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *bubbleIVLeftLC;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *bubbleIVRightLC;
 
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *avaLW;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *avaLH;
@@ -128,13 +131,19 @@
         }
         //bubble
         if (selfMessage) {
-            _bubbleV.backgroundColor = self.selfBubbleColor?:[UIColor lightGrayColor];
+            _bubbleIV.image = [CHKUtils chk_bubbleImageColored:self.selfBubbleColor flipped:NO];
+            _bubbleIVLeftLC.constant = 0;
+            _bubbleIVRightLC.constant = -5;
+//            _bubbleV.backgroundColor = self.selfBubbleColor?:[UIColor lightGrayColor];
         } else {
-            _bubbleV.backgroundColor = self.otherBubbleColor?:[UIColor lightGrayColor];
+            _bubbleIV.image = [CHKUtils chk_bubbleImageColored:self.otherBubbleColor flipped:YES];
+            _bubbleIVLeftLC.constant = -5;
+            _bubbleIVRightLC.constant = 0;
+//            _bubbleV.backgroundColor = self.otherBubbleColor?:[UIColor lightGrayColor];
         }
-
-        _bubbleV.layer.cornerRadius = 10;
-        _bubbleV.layer.masksToBounds = YES;
+//
+//        _bubbleV.layer.cornerRadius = 10;
+//        _bubbleV.layer.masksToBounds = YES;
 
 
         _bubbleContentView.frame = CGRectMake(5, 5,

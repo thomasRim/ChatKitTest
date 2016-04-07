@@ -32,7 +32,18 @@
                     </view>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="66f-fk-iuv">
                         <rect key="frame" x="45" y="30" width="230" height="56"/>
-                        <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="TQs-xI-bzj">
+                                <rect key="frame" x="0.0" y="0.0" width="230" height="56"/>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="bottom" secondItem="TQs-xI-bzj" secondAttribute="bottom" id="Gq0-JG-pqh"/>
+                            <constraint firstItem="TQs-xI-bzj" firstAttribute="leading" secondItem="66f-fk-iuv" secondAttribute="leading" id="NIl-KT-fi3"/>
+                            <constraint firstItem="TQs-xI-bzj" firstAttribute="top" secondItem="66f-fk-iuv" secondAttribute="top" id="P5v-RY-wBU"/>
+                            <constraint firstAttribute="trailing" secondItem="TQs-xI-bzj" secondAttribute="trailing" id="Til-mI-oa1"/>
+                        </constraints>
                     </view>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="X1g-kf-pcg">
                         <rect key="frame" x="5" y="0.0" width="310" height="15"/>
@@ -77,6 +88,9 @@
                 <outlet property="avaLW" destination="1tx-AD-PVX" id="c6H-8v-Jd0"/>
                 <outlet property="avaRH" destination="b2I-4K-gZZ" id="6hA-l1-u0r"/>
                 <outlet property="avaRW" destination="Sxl-xI-mSr" id="yqq-oR-ff1"/>
+                <outlet property="bubbleIV" destination="TQs-xI-bzj" id="qsD-Rw-8XF"/>
+                <outlet property="bubbleIVLeftLC" destination="NIl-KT-fi3" id="0Mx-F0-zrp"/>
+                <outlet property="bubbleIVRightLC" destination="Til-mI-oa1" id="uW2-AS-8vf"/>
                 <outlet property="bubbleV" destination="66f-fk-iuv" id="UF5-nl-DGn"/>
                 <outlet property="dateHeightLC" destination="vmr-fe-7wB" id="NFr-8b-yKu"/>
                 <outlet property="leftAvatarBaseV" destination="tNq-GS-3bI" id="xKA-ef-QjP"/>

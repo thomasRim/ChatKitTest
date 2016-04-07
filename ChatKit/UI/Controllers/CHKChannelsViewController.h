@@ -32,26 +32,33 @@
 @property (nonatomic, strong) NSArray <MMXChannel*> *channels;
 
 /**
- *  NavBar right bar button item onPress interaction hook.
- */
-- (void)didPressChatCreate;
-
-/**
- *  NavBar left bar button item onPress interaction hook.
- */
-- (void)didPressCancel;
-
-/**
- *  Chat channel interaction on select
- */
-- (void)shouldOpenChatChannel:(MMXChannel*)channel;
-
-/**
  *  NavBar title customization.
  *
  *  @return String value. Default value "Chats List". Nullable.
  */
-- (NSString*)titleString;
+@property (nonatomic, copy) NSString* titleString;
+
+/**
+ *  NavigationBar, on the left, button items.
+ *
+ *  @return Array of UIBarButtonItems that will be placed on the left side of NavigationBar;
+ */
+@property (nonatomic, strong) NSArray *leftBarButtonItems;
+
+/**
+ *  NavBar default right bar button item onPress interaction hook.
+ */
+- (void)didPressChatCreate;
+
+/**
+ *  NavBar default left bar button item onPress interaction hook.
+ */
+- (void)didPressCancel;
+
+/**
+ *  Chat channel interaction on select. Have default opening of selected channel.
+ */
+- (void)shouldOpenChatChannel:(MMXChannel*)channel;
 
 /**
  *  Action customization for cell at @indexPath. Oprional. 
@@ -60,12 +67,5 @@
  *  @return return custom (UITableViewRowAction) class object. Nullable.
  */
 - (UITableViewRowAction*)swipeLeftActionForChatCellAtIndex:(NSIndexPath*)indexPath;
-
-/**
- *  NavigationBar, on the left, button items.
- *
- *  @return Array of UIBarButtonItems that will be placed on the left side of NavigationBar;
- */
-- (NSArray*)leftBarButtonItems;
 
 @end

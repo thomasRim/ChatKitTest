@@ -7,6 +7,7 @@
 //
 
 #import "CHKUtils.h"
+#import "CHKConstants.h"
 
 @implementation CHKUtils
 
@@ -72,6 +73,44 @@
         }] resume];
     }
 
+}
+
++ (UIImage*)chk_bubbleImageColored:(UIColor*)color flipped:(BOOL)flipped
+{
+    if (!color) {
+        color = RGB_HEX(0x12aafa);
+    }
+    UIImage *bubbleImage = [CHKUtils chk_imageNamed:@"bubble_regular"];
+
+    CGRect imageRect = CGRectMake(0.0f, 0.0f, bubbleImage.size.width, bubbleImage.size.height);
+    UIImage *newImage = nil;
+
+    UIGraphicsBeginImageContextWithOptions(imageRect.size, NO, bubbleImage.scale);
+    {
+        CGContextRef context = UIGraphicsGetCurrentContext();
+
+        CGContextScaleCTM(context, 1.0f, -1.0f);
+        CGContextTranslateCTM(context, 0.0f, -(imageRect.size.height));
+
+        CGContextClipToMask(context, imageRect, bubbleImage.CGImage);
+        CGContextSetFillColorWithColor(context, color.CGColor);
+        CGContextFillRect(context, imageRect);
+
+        newImage = UIGraphicsGetImageFromCurrentImageContext();
+    }
+    UIGraphicsEndImageContext();
+
+    if (flipped) {
+        newImage = [UIImage imageWithCGImage:newImage.CGImage
+                                       scale:newImage.scale
+                                 orientation:UIImageOrientationUpMirrored];
+    }
+
+    CGPoint center = CGPointMake(newImage.size.width / 2.0f, newImage.size.height / 2.0f);
+
+    newImage = [newImage resizableImageWithCapInsets:UIEdgeInsetsMake(center.y, center.x, center.y, center.x)];
+
+    return newImage;
 }
 
 @end

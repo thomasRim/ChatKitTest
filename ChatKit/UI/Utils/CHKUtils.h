@@ -17,4 +17,6 @@
 
 + (void)chk_loadImageByUrl:(NSURL*)url toImageView:(UIImageView*)imageView animateLoading:(BOOL)aniLoad;
 
++ (UIImage*)chk_bubbleImageColored:(UIColor*)color flipped:(BOOL)flipped; //NO = tail at right
+
 @end

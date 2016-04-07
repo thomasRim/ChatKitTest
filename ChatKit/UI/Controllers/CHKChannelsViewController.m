@@ -53,6 +53,8 @@
     [_channelsTable addSubview:_tableRefreshControl];
     [_tableRefreshControl addTarget:self action:@selector(loadChannels) forControlEvents:UIControlEventValueChanged];
 
+    self.titleString = @"Chats List";
+    self.leftBarButtonItems = @[_cancelBBI];
 
     if (self.navigationController) {
         self.navigationItem.leftBarButtonItems = [self leftBarButtonItems];
@@ -88,11 +90,6 @@
 }
 
 #pragma mark - Interface Methods
-
-- (NSArray *)leftBarButtonItems
-{
-    return _cancelBBI?@[_cancelBBI]:@[];
-}
 
 - (NSArray *)rightBarButtonItems
 {
@@ -133,11 +130,6 @@
     } else if (self.presentingViewController) {
         [self dismissViewControllerAnimated:YES completion:nil];
     }
-}
-
-- (NSString *)titleString
-{
-    return @"Chats List";
 }
 
 - (UITableViewRowAction *)swipeLeftActionForChatCellAtIndex:(NSIndexPath *)indexPath
@@ -182,33 +174,42 @@
 
 - (void)loadChannels
 {
-    [MMXChannel subscribedChannelsWithSuccess:^(NSArray<MMXChannel *> * _Nonnull channels) {
-        _channels = channels;
+    if (_channels.count) {
+        [self loadChannelDetails];
+    } else {
+        [MMXChannel subscribedChannelsWithSuccess:^(NSArray<MMXChannel *> * _Nonnull channels) {
+            _channels = channels;
 
-        if (channels.count) {
-            [MMXChannel channelDetails:channels numberOfMessages:5 numberOfSubcribers:1000 success:^(NSArray<MMXChannelDetailResponse *> * _Nonnull detailsForChannels) {
-
-                if (detailsForChannels) {
-                    _channelDetails = [detailsForChannels sortedArrayUsingComparator:^NSComparisonResult(MMXChannelDetailResponse  *obj1, MMXChannelDetailResponse  *obj2) {
-                        NSString *date1 = obj1.lastPublishedTime;
-                        NSString *date2 = obj2.lastPublishedTime;
-                        return [date2 compare:date1 options:NSNumericSearch];
-                    }].mutableCopy;
-                }
-
+            if (_channels.count) {
+                [self loadChannelDetails];
+            } else {
                 [_tableRefreshControl endRefreshing];
                 [_channelsTable reloadData];
-            } failure:^(NSError * _Nonnull error) {
-                [_tableRefreshControl endRefreshing];
-                NSLog(@"some error due loading channels details \n%@",error);
-            }];
-        } else {
+            }
+        } failure:^(NSError * _Nonnull error) {
             [_tableRefreshControl endRefreshing];
-            [_channelsTable reloadData];
+            NSLog(@"some error due loading default channels \n%@",error);
+        }];
+    }
+}
+
+- (void)loadChannelDetails
+{
+    [MMXChannel channelDetails:_channels numberOfMessages:1 numberOfSubcribers:1000 success:^(NSArray<MMXChannelDetailResponse *> * _Nonnull detailsForChannels) {
+
+        if (detailsForChannels) {
+            _channelDetails = [detailsForChannels sortedArrayUsingComparator:^NSComparisonResult(MMXChannelDetailResponse  *obj1, MMXChannelDetailResponse  *obj2) {
+                NSString *date1 = obj1.lastPublishedTime;
+                NSString *date2 = obj2.lastPublishedTime;
+                return [date2 compare:date1 options:NSNumericSearch];
+            }].mutableCopy;
         }
+
+        [_tableRefreshControl endRefreshing];
+        [_channelsTable reloadData];
     } failure:^(NSError * _Nonnull error) {
         [_tableRefreshControl endRefreshing];
-        NSLog(@"some error due loading default channels \n%@",error);
+        NSLog(@"some error due loading channels details \n%@",error);
     }];
 }
 
