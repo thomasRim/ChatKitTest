@@ -81,6 +81,7 @@
         NSInteger index = [_presentingMessages indexOfObject:msg];
 
         CHKChatMessageCell *cell = [self cellForMessage:msg];
+
         if (index == 0) {
             cell.showSenderName = YES;
             cell.showMessageDate = YES;
@@ -104,6 +105,8 @@
         cell.delegate = self;
 
         cell.bubbleContentView = [self contentCellViewForMessage:msg forCell:cell];
+
+
 
         [_chatCells addObject:cell];
     }
@@ -215,8 +218,6 @@
 {
     CHKChatMessageCell *cell = [tableView dequeueReusableCellWithIdentifier:NSStringFromClass([CHKChatMessageCell class])];
     cell = _chatCells[indexPath.row];
-    cell.selfBubbleColor = _selfBubbleColor;
-    cell.otherBubbleColor = _otherBubbleColor;
     return cell;
 }
 
@@ -404,7 +405,12 @@
 - (CHKChatMessageCell*)cellForMessage:(MMXMessage*)message
 {
     CHKChatMessageCell *cell = [[CHKChatMessageCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:NSStringFromClass([CHKChatMessageCell class])];
+
+    cell.selfBubbleColor = _selfBubbleColor;
+    cell.otherBubbleColor = _otherBubbleColor;
+    cell.avatarBackground = _avatarBackgroundColor;
     cell.message = message;
+
     return cell;
 }
 
