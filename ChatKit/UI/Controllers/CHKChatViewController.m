@@ -66,54 +66,65 @@
     NSDate *endDate = [NSDate dateWithTimeIntervalSince1970:([NSDate date].timeIntervalSince1970 - 7*24*60*60)];
     
     [_chatChannel messagesBetweenStartDate:endDate endDate:[NSDate date] limit:1000 offset:0 ascending:YES success:^(int totalCount, NSArray<MMXMessage *> * _Nonnull messages) {
+
         _presentingMessages = messages.mutableCopy;
-        [self generateCells];
+
+        [self filterPresentingMessages];
+
+        [_chatTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_presentingMessages.count-1 inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
+
     } failure:^(NSError * _Nonnull error) {
         
     }];
+}
+
+- (void)filterPresentingMessages
+{
+    NSMutableArray *iterator = _presentingMessages.mutableCopy;
+
+    for (MMXMessage *msg in iterator) {
+        if (CHKMessageType_SystemMessage == [self messageTypeForMessage:msg]){
+            [_presentingMessages removeObject:msg];
+        }
+    }
+    [self generateCells];
 }
 
 - (void)generateCells
 {
     _chatCells = @[].mutableCopy;
 
-    NSMutableArray *iterator = _presentingMessages.mutableCopy;
-
-    for (MMXMessage *msg in iterator) {
-        NSInteger index = [iterator indexOfObject:msg];
+    for (MMXMessage *msg in _presentingMessages) {
 
         CHKChatMessageCell *cell = [self cellForMessage:msg];
+        NSInteger index = [_presentingMessages indexOfObject:msg];
 
-        if ([self contentCellViewForMessage:msg forCell:cell]) {
-            if (index == 0) {
+        if (index == 0) {
+            cell.showSenderName = YES;
+            cell.showMessageDate = YES;
+        } else  if (_presentingMessages.count > 1){
+
+            MMXMessage *prevMessage = _presentingMessages[index-1];
+            if (![msg.sender.userID isEqualToString:prevMessage.sender.userID]) {
                 cell.showSenderName = YES;
-                cell.showMessageDate = YES;
-            } else  if (_presentingMessages.count > 1){
-
-                MMXMessage *prevMessage = _presentingMessages[index-1];
-                if (![msg.sender.userID isEqualToString:prevMessage.sender.userID]) {
-                    cell.showSenderName = YES;
-                }
-
-                NSTimeInterval interval = msg.timestamp.timeIntervalSince1970-prevMessage.timestamp.timeIntervalSince1970;
-                if (interval > 60*60) {
-                    cell.showMessageDate = YES;
-                } else if (interval > 5*60) {
-                    cell.showMessageDate = YES;
-                    cell.messageDateFormat = @"hh:mm a";
-                }
             }
 
-            cell.showSenderAvatar = YES;
-            cell.delegate = self;
-            
-            cell.bubbleContentView = [self contentCellViewForMessage:msg forCell:cell];
-            
-            [_chatCells addObject:cell];
-
-        } else {
-            [_presentingMessages removeObject:msg];
+            NSTimeInterval interval = msg.timestamp.timeIntervalSince1970-prevMessage.timestamp.timeIntervalSince1970;
+            if (interval > 60*60) {
+                cell.showMessageDate = YES;
+            } else if (interval > 5*60) {
+                cell.showMessageDate = YES;
+                cell.messageDateFormat = @"hh:mm a";
+            }
         }
+
+        cell.showSenderAvatar = YES;
+        cell.delegate = self;
+
+        cell.bubbleContentView = [self contentCellViewForMessage:msg forCell:cell];
+
+        [_chatCells addObject:cell];
+
     }
     [_chatTable reloadData];
 }
@@ -238,16 +249,19 @@
                 if (!_presentingMessages.count) {
                     _presentingMessages = @[].mutableCopy;
                 }
-                
-                [_chatTable beginUpdates];
-                
-                [_presentingMessages addObject:message];
-                [self generateCells];
 
-                [_chatTable insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:_presentingMessages.count-1 inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
-                [_chatTable endUpdates];
-                
-                [_chatTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_presentingMessages.count-1 inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
+                if (CHKMessageType_SystemMessage != [self messageTypeForMessage:message]) {
+                    [_chatTable beginUpdates];
+
+                    [_presentingMessages addObject:message];
+                    [self generateCells];
+
+                    [_chatTable insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:_chatCells.count-1 inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
+                    [_chatTable endUpdates];
+
+                    [_chatTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_chatCells.count-1 inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
+                }
+
             }
         }
     }
