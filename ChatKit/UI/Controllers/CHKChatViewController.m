@@ -77,38 +77,43 @@
 {
     _chatCells = @[].mutableCopy;
 
-    for (MMXMessage *msg in _presentingMessages) {
-        NSInteger index = [_presentingMessages indexOfObject:msg];
+    NSMutableArray *iterator = _presentingMessages.mutableCopy;
+
+    for (MMXMessage *msg in iterator) {
+        NSInteger index = [iterator indexOfObject:msg];
 
         CHKChatMessageCell *cell = [self cellForMessage:msg];
 
-        if (index == 0) {
-            cell.showSenderName = YES;
-            cell.showMessageDate = YES;
-        } else  if (_presentingMessages.count > 1){
-
-            MMXMessage *prevMessage = _presentingMessages[index-1];
-            if (![msg.sender.userID isEqualToString:prevMessage.sender.userID]) {
+        if ([self contentCellViewForMessage:msg forCell:cell]) {
+            if (index == 0) {
                 cell.showSenderName = YES;
+                cell.showMessageDate = YES;
+            } else  if (_presentingMessages.count > 1){
+
+                MMXMessage *prevMessage = _presentingMessages[index-1];
+                if (![msg.sender.userID isEqualToString:prevMessage.sender.userID]) {
+                    cell.showSenderName = YES;
+                }
+
+                NSTimeInterval interval = msg.timestamp.timeIntervalSince1970-prevMessage.timestamp.timeIntervalSince1970;
+                if (interval > 60*60) {
+                    cell.showMessageDate = YES;
+                } else if (interval > 5*60) {
+                    cell.showMessageDate = YES;
+                    cell.messageDateFormat = @"hh:mm a";
+                }
             }
 
-            NSTimeInterval interval = msg.timestamp.timeIntervalSince1970-prevMessage.timestamp.timeIntervalSince1970;
-            if (interval > 60*60) {
-                cell.showMessageDate = YES;
-            } else if (interval > 5*60) {
-                cell.showMessageDate = YES;
-                cell.messageDateFormat = @"hh:mm a";
-            }
+            cell.showSenderAvatar = YES;
+            cell.delegate = self;
+            
+            cell.bubbleContentView = [self contentCellViewForMessage:msg forCell:cell];
+            
+            [_chatCells addObject:cell];
+
+        } else {
+            [_presentingMessages removeObject:msg];
         }
-
-        cell.showSenderAvatar = YES;
-        cell.delegate = self;
-
-        cell.bubbleContentView = [self contentCellViewForMessage:msg forCell:cell];
-
-
-
-        [_chatCells addObject:cell];
     }
     [_chatTable reloadData];
 }
@@ -471,7 +476,7 @@
 
 - (void)chatMessageCell:(CHKChatMessageCell *)cell updatedHeight:(CGFloat)height
 {
-    NSLog(@"cell %@, height %@",cell,@(height));
+//    NSLog(@"cell %@, height %@",cell,@(height));
 //    [_chatTable beginUpdates];
 //    [_chatTable endUpdates];
 }
