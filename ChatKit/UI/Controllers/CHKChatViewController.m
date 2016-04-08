@@ -71,7 +71,9 @@
 
         [self filterPresentingMessages];
 
-        [_chatTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_presentingMessages.count-1 inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
+        if (_presentingMessages.count) {
+            [_chatTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_presentingMessages.count-1 inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
+        }
 
     } failure:^(NSError * _Nonnull error) {
         
